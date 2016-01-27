@@ -88,7 +88,7 @@
       // чего-либо с другой обводкой.
 
       // Толщина линии.
-      this._ctx.lineWidth = 6;
+      // this._ctx.lineWidth = 6;
       // Цвет обводки.
       this._ctx.strokeStyle = '#ffe753';
       // Размер штрихов. Первый элемент массива задает длину штриха, второй
@@ -111,13 +111,51 @@
       // Координаты задаются от центра холста.
       this._ctx.drawImage(this._image, displX, displY);
 
+      // Отрисовка затенения
+      this._ctx.beginPath();
+      this._ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+
+      // Задаём внешний контур
+      this._ctx.moveTo(-this._container.width / 2, -this._container.height / 2);
+      this._ctx.lineTo(this._container.width / 2, -this._container.height / 2);
+      this._ctx.lineTo(this._container.width / 2, this._container.height / 2);
+      this._ctx.lineTo(-this._container.width / 2, this._container.height / 2);
+      this._ctx.lineTo(-this._container.width / 2, -this._container.height / 2);
+
+      var lineWidth = 6;
+      var gap = 7;
+      // Задаём внутренний контур
+      var topX = -this._resizeConstraint.side / 2;
+      var topY = -this._resizeConstraint.side / 2 - lineWidth;
+
+      this._ctx.moveTo(topX, topY);
+      this._ctx.lineTo(topX + this._resizeConstraint.side, topY);
+      this._ctx.lineTo(topX + this._resizeConstraint.side, topY + this._resizeConstraint.side);
+      this._ctx.lineTo(topX, topY + this._resizeConstraint.side);
+      this._ctx.lineTo(topX, topY);
+      // Заполняем пространство между контурами
+      this._ctx.fill('evenodd');
+
+      // Выводим размер изображения
+      var fontSize = 20;
+      this._ctx.font = fontSize + 'px sans-serif';
+      this._ctx.textAlign = 'center';
+      this._ctx.fillStyle = '#fff';
+
+      var sizeText = this._image.naturalWidth + ' x ' + this._image.naturalHeight;
+
+      this._ctx.fillText(sizeText, 0, topY - this._ctx.lineWidth - (fontSize / 2), this._resizeConstraint.side);
+
       // Отрисовка прямоугольника, обозначающего область изображения после
       // кадрирования. Координаты задаются от центра.
-      this._ctx.strokeRect(
-          (-this._resizeConstraint.side / 2) - this._ctx.lineWidth / 2,
-          (-this._resizeConstraint.side / 2) - this._ctx.lineWidth / 2,
-          this._resizeConstraint.side - this._ctx.lineWidth / 2,
-          this._resizeConstraint.side - this._ctx.lineWidth / 2);
+      // уменьшил размер потому что рамка выходила за область с заданием значений
+      this._createBorder(
+        topX, topY,
+        this._resizeConstraint.side,
+        lineWidth,
+        gap,
+        '#ffe753',
+        'dotted');
 
       // Восстановление состояния канваса, которое было до вызова ctx.save
       // и последующего изменения системы координат. Нужно для того, чтобы
@@ -126,6 +164,73 @@
       // некорректно сработает даже очистка холста или нужно будет использовать
       // сложные рассчеты для координат прямоугольника, который нужно очистить.
       this._ctx.restore();
+    },
+
+    /**
+     * Отрисовка стороны обрезающего прямоугольника заданным способом
+     * @param {number} x
+     * @param {number} y
+     * @param {number} sideSize
+     * @param {number} lineWeight
+     * @param {number} gap
+     * @param {string} lineColor
+     * @param {string} lineType
+     * @private
+    */
+    _createBorder: function(x, y, sideSize, lineWeight, gap, lineColor, lineType) {
+      x += lineWeight / 2;
+      y += lineWeight / 2;
+      sideSize -= lineWeight;
+
+      if (!lineType) {
+        this._ctx.lineWidth = lineWeight;
+        this._ctx.strokeStyle = lineColor;
+        this._ctx.strokeRect(x, y,
+                             sideSize, sideSize);
+      } else {
+        var offset = 0;
+        offset = this._createBorderSide(x, y, offset, sideSize, lineWeight, gap, lineColor, lineType, 1, 0);
+        offset = this._createBorderSide(x + sideSize, y, offset, sideSize, lineWeight, gap, lineColor, lineType, 0, 1);
+        offset = this._createBorderSide(x + sideSize, y + sideSize, offset, sideSize, lineWeight, gap, lineColor, lineType, -1, 0);
+        this._createBorderSide(x, y + sideSize, offset, sideSize, lineWeight, gap, lineColor, lineType, 0, -1);
+      }
+    },
+
+    /**
+     * Отрисовка стороны обрезающего прямоугольника заданным способом
+     * @param {number} x
+     * @param {number} y
+     * @param {number} offset
+     * @param {number} sideSize
+     * @param {number} lineWeight
+     * @param {number} gap
+     * @param {string} lineColor
+     * @param {string} lineType
+     * @param {number} directionX
+     * @param {number} directionY
+     * @private
+    */
+    _createBorderSide: function(x, y, offset, sideSize, lineWeight, gap, lineColor, lineType, directionX, directionY) {
+      var step = lineWeight + gap;
+      var limitX = x + directionX * sideSize;
+      var limitY = y + directionY * sideSize;
+      var d = 0;
+
+      x += directionX * offset;
+      y += directionY * offset;
+
+      this._ctx.fillStyle = lineColor;
+      while ((directionX !== 0 && directionX * x <= directionX * limitX) || (directionY !== 0 && directionY * y <= directionY * limitY)) {
+        if (lineType === 'dotted') {
+          this._ctx.beginPath();
+          this._ctx.arc(x, y, lineWeight / 2, 0, Math.PI * 2);
+          this._ctx.fill();
+        }
+        d++;
+        x += directionX * step;
+        y += directionY * step;
+      }
+      return directionX !== 0 ? directionX * (x - limitX) : directionY * (y - limitY);
     },
 
     /**
