@@ -186,6 +186,24 @@ body {
   cursor: pointer;
 }
 
+.upload-form-controls button:disabled {
+  -webkit-filter: opacity(0.5) saturate(0.5);
+  -o-filter: opacity(0.5) saturate(0.5);
+  filter: opacity(0.5) saturate(0.5);
+}
+
+.upload-resize-controls .resize-error {
+  position: absolute;
+  display: block;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  transform: translateX(-50%);
+
+  color: red;
+  text-align: center;
+}
+
 .upload-form-controls-prev {
   float: left;
 

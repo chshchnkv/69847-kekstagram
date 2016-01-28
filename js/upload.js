@@ -72,6 +72,17 @@
    * @return {boolean}
    */
   function resizeFormIsValid() {
+    var resizeLeft = +resizeForm.elements['resize-x'].value;
+    var resizeTop = +resizeForm.elements['resize-y'].value;
+    var resizeSize = +resizeForm.elements['resize-size'].value;
+
+    if ((resizeLeft < 0) || (resizeTop < 0) || (resizeSize < 0)) {
+      return false;
+    } else if ((resizeLeft + resizeSize) > currentResizer._image.naturalWidth) {
+      return false;
+    } else if ((resizeTop + resizeSize) > currentResizer._image.naturalHeight) {
+      return false;
+    }
     return true;
   }
 
@@ -86,6 +97,9 @@
    * @type {HTMLFormElement}
    */
   var resizeForm = document.forms['upload-resize'];
+  var resizeControls = resizeForm.querySelector('.upload-resize-controls');
+  var resizeFormSubmit = resizeForm.elements['resize-fwd'];
+  var errorMsg = resizeControls.querySelector('.resize-error');
 
   /**
    * Форма добавления фильтра.
@@ -199,6 +213,26 @@
 
       resizeForm.classList.add('invisible');
       filterForm.classList.remove('invisible');
+    }
+  };
+
+  resizeForm.onchange = function() {
+    errorMsg = resizeControls.querySelector('.resize-error');
+
+    if (resizeFormIsValid()) {
+      resizeFormSubmit.removeAttribute('disabled');
+      if (errorMsg) {
+        resizeControls.removeChild(errorMsg);
+        errorMsg = null;
+      }
+    } else {
+      resizeFormSubmit.setAttribute('disabled', true);
+      if (!errorMsg) {
+        errorMsg = document.createElement('div');
+        errorMsg.className = 'resize-error';
+        errorMsg.innerHTML = 'Проверьте правильность введённых данных';
+        resizeControls.appendChild(errorMsg);
+      }
     }
   };
 
