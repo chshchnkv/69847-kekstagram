@@ -205,6 +205,7 @@
    * кропнутое изображение в форму добавления фильтра и показывает ее.
    * @param {Event} evt
    */
+  /*global docCookies*/
   resizeForm.onsubmit = function(evt) {
     evt.preventDefault();
 
@@ -213,6 +214,7 @@
 
       resizeForm.classList.add('invisible');
       filterForm.classList.remove('invisible');
+      setSelectedFilter(docCookies.getItem('filter'));
     }
   };
 
@@ -254,6 +256,7 @@
    */
   filterForm.onsubmit = function(evt) {
     evt.preventDefault();
+    docCookies.setItem('filter', getSelectedFilter(), cookieEspires());
 
     cleanupResizer();
     updateBackground();
@@ -261,6 +264,29 @@
     filterForm.classList.add('invisible');
     uploadForm.classList.remove('invisible');
   };
+
+  function cookieEspires() {
+    var lastBirthday = new Date('2015-03-23');
+    var now = new Date();
+    return new Date(+now + (now.valueOf() - lastBirthday.valueOf()));
+  }
+
+  function getSelectedFilter() {
+    return [].filter.call(filterForm['upload-filter'], function(item) {
+      return item.checked;
+    })[0].value;
+  }
+
+  function setSelectedFilter(filterValue) {
+    var itemToCheck = [].filter.call(filterForm['upload-filter'], function(item) {
+      return item.value === filterValue;
+    });
+
+    if (itemToCheck.length > 0) {
+      itemToCheck[0].checked = true;
+      filterForm.onchange();
+    }
+  }
 
   /**
    * Обработчик изменения фильтра. Добавляет класс из filterMap соответствующий
