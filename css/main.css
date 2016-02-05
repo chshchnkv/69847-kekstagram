@@ -394,6 +394,7 @@ input[type=radio]:checked + .upload-filter-label {
   position: relative;
 
   display: inline-block;
+  vertical-align: top;
   box-sizing: border-box;
   width: 182px;
   height: 182px;
