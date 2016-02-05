@@ -1,5 +1,5 @@
 'use strict';
-(function() {
+(function(gl) {
   var filters = document.querySelector('.filters');
   var pictures = document.querySelector('.pictures');
 
@@ -7,7 +7,7 @@
 
   var picturesFragment = document.createDocumentFragment();
 
-  window.pictures.forEach(function(picture) {
+  gl.pictures.forEach(function(picture) {
     picturesFragment.appendChild(getElementFromTemplate(picture));
   });
   pictures.appendChild(picturesFragment);
@@ -50,4 +50,4 @@
       element.classList.add('picture-load-failure');
     }
   }
-})();
+})(window);
