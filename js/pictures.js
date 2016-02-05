@@ -1,23 +1,51 @@
 'use strict';
-(function(gl) {
+(function() {
+  var IMAGE_TIMEOUT = 10000;
   var filters = document.querySelector('.filters');
-  var pictures = document.querySelector('.pictures');
-
   filters.classList.add('hidden');
 
-  var picturesFragment = document.createDocumentFragment();
+  /// Контейнер для загрузки изображений
+  var picturesElement = document.querySelector('.pictures');
+  getPictures();
 
-  gl.pictures.forEach(function(picture) {
-    picturesFragment.appendChild(getElementFromTemplate(picture));
-  });
-  pictures.appendChild(picturesFragment);
+  function getPictures() {
+    picturesElement.classList.add('pictures-loading');
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', 'http://o0.github.io/assets/json/pictures.json');
+    xhr.timeout = IMAGE_TIMEOUT;
+    xhr.onload = function(event) {
+      var rawData = event.target.response;
+      var loadedPictures = JSON.parse(rawData);
+      renderPictures(loadedPictures);
+      picturesElement.classList.remove('pictures-loading');
+    };
+
+    xhr.onerror = function() {
+      picturesElement.classList.add('pictures-failure');
+    };
+
+    xhr.ontimeout = function() {
+      picturesElement.classList.add('pictures-failure');
+    };
+
+    xhr.send();
+  }
+
+  function renderPictures(pictures) {
+    picturesElement.innerHTML = '';
+    var picturesFragment = document.createDocumentFragment();
+
+    pictures.forEach(function(picture) {
+      picturesFragment.appendChild(getElementFromTemplate(picture));
+    });
+    picturesElement.appendChild(picturesFragment);
+  }
 
   function getElementFromTemplate(picture) {
     var template = document.querySelector('#picture-template');
     var element = ('content' in template) ? template.content.children[0].cloneNode(true) : template.children[0].cloneNode(true);
 
     var templateImage = element.querySelector('img');
-    var IMAGE_TIMEOUT = 10000;
 
     if (element.classList.contains('picture')) {
       element.href = picture.url;
@@ -50,4 +78,4 @@
       element.classList.add('picture-load-failure');
     }
   }
-})(window);
+})();
