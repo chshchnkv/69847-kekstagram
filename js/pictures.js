@@ -2,10 +2,62 @@
 (function() {
   var IMAGE_TIMEOUT = 10000;
   var filters = document.querySelector('.filters');
-  filters.classList.add('hidden');
+  filters.classList.remove('hidden');
+
+  var activeFilter = '';
+  filters.onchange = function(event) {
+    filterPictures(event.target.id);
+  };
+
+  function getCurrentFilter() {
+    var filtersRadio = document.querySelectorAll('.filters-radio');
+    return [].filter.call(filtersRadio, function(item) {
+      return item.checked;
+    })[0].id;
+  }
+
+  function filterPictures(id) {
+
+    if (activeFilter === id) {
+      return;
+    }
+
+    activeFilter = id;
+
+    var filteredPictures;
+    switch (activeFilter) {
+
+      case 'filter-popular':
+        filteredPictures = loadedPictures.slice(0);
+        filteredPictures.sort(function(a, b) {
+          return b.likes - a.likes;
+        }); break;
+
+      case 'filter-new':
+        filteredPictures = loadedPictures.filter(function(item) {
+          var itemDate = new Date(item.date);
+          return itemDate >= (new Date().valueOf() - (14 * 24 * 60 * 60 * 1000));
+        });
+        filteredPictures.sort(function(a, b) {
+          return (new Date(b.date).valueOf() - new Date(a.date).valueOf());
+        }); break;
+
+      case 'filter-discussed':
+        filteredPictures = loadedPictures.slice(0);
+        filteredPictures.sort(function(a, b) {
+          return b.comments - a.comments;
+        }); break;
+
+      default:
+        filteredPictures = loadedPictures.slice(0);
+    }
+
+    renderPictures(filteredPictures);
+  }
 
   /// Контейнер для загрузки изображений
   var picturesElement = document.querySelector('.pictures');
+  var loadedPictures = null;
   getPictures();
 
   function getPictures() {
@@ -15,8 +67,9 @@
     xhr.timeout = IMAGE_TIMEOUT;
     xhr.onload = function(event) {
       var rawData = event.target.response;
-      var loadedPictures = JSON.parse(rawData);
-      renderPictures(loadedPictures);
+      loadedPictures = JSON.parse(rawData);
+      /* отрисовка с фильтром, установленным при загрузке страницы */
+      filterPictures(getCurrentFilter());
       picturesElement.classList.remove('pictures-loading');
     };
 
