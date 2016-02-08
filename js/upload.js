@@ -266,9 +266,12 @@
   };
 
   function cookieEspires() {
-    var lastBirthday = new Date('2015-03-23');
     var now = new Date();
-    return new Date(+now + (now.valueOf() - lastBirthday.valueOf()));
+    var lastBirthday = new Date(now.getFullYear(), 2, 23);
+    if ((now.valueOf() - lastBirthday.valueOf()) < 0) {
+      lastBirthday.setFullYear(lastBirthday.getFullYear() - 1);
+    }
+    return new Date(+now + Math.abs(now.valueOf() - lastBirthday.valueOf()));
   }
 
   function getSelectedFilter() {
