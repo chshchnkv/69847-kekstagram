@@ -70,17 +70,21 @@
   var filteredPictures = [];
   getPictures();
 
+  var scrollTimeout;
   gl.addEventListener('scroll', function() {
-    if (needToRenderNextPage()) {
-      renderPictures(filteredPictures, ++currentPicturesPage);
-    }
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(function() {
+      if (needToRenderNextPage()) {
+        renderPictures(filteredPictures, ++currentPicturesPage);
+      }
+    }, 100);
   });
 
   function needToRenderNextPage() {
     /*
-     если нижняя граница контейнера изображений отображается на экране и выведены не все фотографии, значит нужно загрузить следующую страницу
+     если нижняя ряд фотографий в контейнере изображений отображается на экране наполовину и больше и выведены не все фотографии, значит нужно загрузить следующую страницу
     */
-    return ((PAGE_SIZE * (currentPicturesPage + 1)) < filteredPictures.length) && (picturesElement.getBoundingClientRect().bottom <= gl.innerHeight);
+    return ((PAGE_SIZE * (currentPicturesPage + 1)) < filteredPictures.length) && (picturesElement.getBoundingClientRect().bottom - (182 / 2) <= gl.innerHeight);
   }
 
   function getPictures() {
