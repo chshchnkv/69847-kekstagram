@@ -1,22 +1,32 @@
 'use strict';
-(function() {
+(function(gl) {
   var IMAGE_TIMEOUT = 10000;
+  var PAGE_SIZE = 12;
+
+  var currentPicturesPage = 0;
+
+  var activeFilter = '';
   var filters = document.querySelector('.filters');
   filters.classList.remove('hidden');
 
-  var activeFilter = '';
-  filters.onchange = function(event) {
-    filterPictures(event.target.id);
-  };
+  /// Обработка событий при кликах на фильтрах
+  filters.addEventListener('change', function(event) {
+    if (event.target.classList.contains('filters-radio')) {
+      setActiveFilter(event.target.id);
+    }
+  });
 
-  function getCurrentFilter() {
+  /// выбирает текущий фильтр на основе того, какому radio установлен признак checked
+  /// используется при первой загрузке и позволяет сразу применить фильтр
+  function getActiveFilter() {
     var filtersRadio = document.querySelectorAll('.filters-radio');
     return [].filter.call(filtersRadio, function(item) {
       return item.checked;
     })[0].id;
   }
 
-  function filterPictures(id) {
+  /// устанавливает текущий фильтр по идентификатору
+  function setActiveFilter(id) {
 
     if (activeFilter === id) {
       return;
@@ -24,7 +34,6 @@
 
     activeFilter = id;
 
-    var filteredPictures;
     switch (activeFilter) {
 
       case 'filter-popular':
@@ -52,16 +61,30 @@
         filteredPictures = loadedPictures.slice(0);
     }
 
-    renderPictures(filteredPictures);
+    renderPictures(filteredPictures, 0, true);
   }
 
   /// Контейнер для загрузки изображений
   var picturesElement = document.querySelector('.pictures');
-  var loadedPictures = null;
+  var loadedPictures = [];
+  var filteredPictures = [];
   getPictures();
 
+  gl.addEventListener('scroll', function() {
+    if (needToRenderNextPage()) {
+      renderPictures(filteredPictures, ++currentPicturesPage);
+    }
+  });
+
+  function needToRenderNextPage() {
+    /*
+     если нижняя граница контейнера изображений отображается на экране и выведены не все фотографии, значит нужно загрузить следующую страницу
+    */
+    return ((PAGE_SIZE * (currentPicturesPage + 1)) < filteredPictures.length) && (picturesElement.getBoundingClientRect().bottom <= gl.innerHeight);
+  }
+
   function getPictures() {
-    picturesElement.classList.add('pictures-loading');
+    picturesLoading(true);
     var xhr = new XMLHttpRequest();
     xhr.open('GET', 'http://o0.github.io/assets/json/pictures.json');
     xhr.timeout = IMAGE_TIMEOUT;
@@ -69,29 +92,52 @@
       var rawData = event.target.response;
       loadedPictures = JSON.parse(rawData);
       /* отрисовка с фильтром, установленным при загрузке страницы */
-      filterPictures(getCurrentFilter());
-      picturesElement.classList.remove('pictures-loading');
+      setActiveFilter(getActiveFilter());
+      picturesLoading(false);
     };
 
-    xhr.onerror = function() {
-      picturesElement.classList.add('pictures-failure');
-    };
-
-    xhr.ontimeout = function() {
-      picturesElement.classList.add('pictures-failure');
-    };
+    xhr.onerror = pictureFailure;
+    xhr.ontimeout = pictureFailure;
 
     xhr.send();
   }
 
-  function renderPictures(pictures) {
-    picturesElement.innerHTML = '';
+  function pictureFailure() {
+    picturesElement.classList.add('pictures-failure');
+  }
+
+  function picturesLoading(start) {
+    if (start) {
+      picturesElement.classList.add('pictures-loading');
+    } else {
+      picturesElement.classList.remove('pictures-loading');
+    }
+  }
+
+  function renderPictures(pictures, page, replace) {
+    page = page || 0;
+    if (replace) {
+      currentPicturesPage = 0;
+      picturesElement.innerHTML = '';
+    }
     var picturesFragment = document.createDocumentFragment();
 
-    pictures.forEach(function(picture) {
+    var from = page * PAGE_SIZE;
+    var to = from + PAGE_SIZE;
+    var pagePictures = pictures.slice(from, to);
+
+    pagePictures.forEach(function(picture) {
       picturesFragment.appendChild(getElementFromTemplate(picture));
     });
     picturesElement.appendChild(picturesFragment);
+
+    /*
+      рекурсивно вызываем функцию отрисовки, пока требуется вывод фотографий на экран
+      сработает, если разрешение или масштаб вьюпорта позволяет вывести больше одной страницы на экран за раз
+    */
+    while (needToRenderNextPage()) {
+      renderPictures(pictures, ++currentPicturesPage);
+    }
   }
 
   function getElementFromTemplate(picture) {
@@ -131,4 +177,4 @@
       element.classList.add('picture-load-failure');
     }
   }
-})();
+})(window);
