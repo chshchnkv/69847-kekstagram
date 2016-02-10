@@ -107,6 +107,7 @@
   }
 
   function pictureFailure() {
+    picturesLoading(false);
     picturesElement.classList.add('pictures-failure');
   }
 
