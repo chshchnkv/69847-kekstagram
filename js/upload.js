@@ -7,7 +7,7 @@
 
 'use strict';
 
-(function() {
+(function(gl) {
   /** @enum {string} */
   var FileType = {
     'GIF': '',
@@ -86,6 +86,24 @@
     return true;
   }
 
+  function validateResizeForm(valid) {
+    if (valid) {
+      resizeFormSubmit.removeAttribute('disabled');
+      if (errorMsg) {
+        resizeControls.removeChild(errorMsg);
+        errorMsg = null;
+      }
+    } else {
+      resizeFormSubmit.setAttribute('disabled', true);
+      if (!errorMsg) {
+        errorMsg = document.createElement('div');
+        errorMsg.className = 'resize-error';
+        errorMsg.innerHTML = 'Проверьте правильность введённых данных';
+        resizeControls.appendChild(errorMsg);
+      }
+    }
+  }
+
   /**
    * Форма загрузки изображения.
    * @type {HTMLFormElement}
@@ -153,7 +171,7 @@
    * и показывается форма кадрирования.
    * @param {Event} evt
    */
-  uploadForm.onchange = function(evt) {
+  uploadForm.addEventListener('change', function(evt) {
     var element = evt.target;
     if (element.id === 'upload-file') {
       // Проверка типа загружаемого файла, тип должен быть изображением
@@ -183,14 +201,31 @@
         showMessage(Action.ERROR);
       }
     }
-  };
+  });
+
+  function updateResizeForm() {
+    validateResizeForm(resizeFormIsValid());
+    if (currentResizer !== null) {
+      var constraint = currentResizer.getConstraint();
+      resizeForm.elements['resize-x'].value = Math.floor(constraint.x);
+      resizeForm.elements['resize-y'].value = Math.floor(constraint.y);
+      resizeForm.elements['resize-size'].value = Math.floor(constraint.side);
+    }
+  }
+
+  function updateResizer() {
+    validateResizeForm(resizeFormIsValid());
+    if (currentResizer !== null) {
+      currentResizer.setConstraint(+resizeForm.elements['resize-x'].value, +resizeForm.elements['resize-y'].value, +resizeForm.elements['resize-size'].value);
+    }
+  }
 
   /**
    * Обработка сброса формы кадрирования. Возвращает в начальное состояние
    * и обновляет фон.
    * @param {Event} evt
    */
-  resizeForm.onreset = function(evt) {
+  resizeForm.addEventListener('reset', function(evt) {
     evt.preventDefault();
 
     cleanupResizer();
@@ -198,7 +233,7 @@
 
     resizeForm.classList.add('invisible');
     uploadForm.classList.remove('invisible');
-  };
+  });
 
   /**
    * Обработка отправки формы кадрирования. Если форма валидна, экспортирует
@@ -206,7 +241,7 @@
    * @param {Event} evt
    */
   /*global docCookies*/
-  resizeForm.onsubmit = function(evt) {
+  resizeForm.addEventListener('submit', function(evt) {
     evt.preventDefault();
 
     if (resizeFormIsValid()) {
@@ -216,45 +251,33 @@
       filterForm.classList.remove('invisible');
       setSelectedFilter(docCookies.getItem('filter'));
     }
-  };
+  });
 
-  resizeForm.onchange = function() {
+  resizeForm.addEventListener('change', onResizeFormChange);
+  function onResizeFormChange() {
     errorMsg = resizeControls.querySelector('.resize-error');
 
-    if (resizeFormIsValid()) {
-      resizeFormSubmit.removeAttribute('disabled');
-      if (errorMsg) {
-        resizeControls.removeChild(errorMsg);
-        errorMsg = null;
-      }
-    } else {
-      resizeFormSubmit.setAttribute('disabled', true);
-      if (!errorMsg) {
-        errorMsg = document.createElement('div');
-        errorMsg.className = 'resize-error';
-        errorMsg.innerHTML = 'Проверьте правильность введённых данных';
-        resizeControls.appendChild(errorMsg);
-      }
-    }
-  };
+    updateResizer();
+  }
 
   /**
    * Сброс формы фильтра. Показывает форму кадрирования.
    * @param {Event} evt
    */
-  filterForm.onreset = function(evt) {
+  filterForm.addEventListener('reset', function(evt) {
     evt.preventDefault();
 
     filterForm.classList.add('invisible');
     resizeForm.classList.remove('invisible');
-  };
+  });
 
   /**
    * Отправка формы фильтра. Возвращает в начальное состояние, предварительно
    * записав сохраненный фильтр в cookie.
    * @param {Event} evt
    */
-  filterForm.onsubmit = function(evt) {
+
+  filterForm.addEventListener('submit', function(evt) {
     evt.preventDefault();
     docCookies.setItem('filter', getSelectedFilter(), cookieEspires());
 
@@ -263,7 +286,7 @@
 
     filterForm.classList.add('invisible');
     uploadForm.classList.remove('invisible');
-  };
+  });
 
   function cookieEspires() {
     var now = new Date();
@@ -287,7 +310,7 @@
 
     if (itemToCheck.length > 0) {
       itemToCheck[0].checked = true;
-      filterForm.onchange();
+      onFilterFormChange();
     }
   }
 
@@ -295,7 +318,9 @@
    * Обработчик изменения фильтра. Добавляет класс из filterMap соответствующий
    * выбранному значению в форме.
    */
-  filterForm.onchange = function() {
+  filterForm.addEventListener('change', onFilterFormChange);
+
+  function onFilterFormChange() {
     if (!filterMap) {
       // Ленивая инициализация. Объект не создается до тех пор, пока
       // не понадобится прочитать его в первый раз, а после этого запоминается
@@ -311,8 +336,10 @@
     // убрать предыдущий примененный класс. Для этого нужно или запоминать его
     // состояние или просто перезаписывать.
     filterImage.className = 'filter-image-preview ' + filterMap[getSelectedFilter()];
-  };
+  }
+
+  gl.addEventListener('resizerchange', updateResizeForm);
 
   cleanupResizer();
   updateBackground();
-})();
+})(window);
