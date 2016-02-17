@@ -68,6 +68,7 @@
   var picturesElement = document.querySelector('.pictures');
   var loadedPictures = [];
   var filteredPictures = [];
+  var renderedPictures = [];
   getPictures();
 
   var scrollTimeout;
@@ -127,7 +128,10 @@
     page = page || 0;
     if (replace) {
       currentPicturesPage = 0;
-      picturesElement.innerHTML = '';
+      renderedPictures.forEach(function(item) {
+        picturesElement.removeChild(item.element);
+      });
+      renderedPictures = [];
     }
     var picturesFragment = document.createDocumentFragment();
 
@@ -137,6 +141,7 @@
 
     pagePictures.forEach(function(picture) {
       picturesFragment.appendChild(picture.render());
+      renderedPictures.push(picture);
     });
     picturesElement.appendChild(picturesFragment);
 
