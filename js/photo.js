@@ -5,6 +5,18 @@
     this.element = null;
   }
 
+  Photo.prototype.getLikes = function() {
+    return (this._data ? this._data.likes : 0);
+  };
+
+  Photo.prototype.getComments = function() {
+    return (this._data ? this._data.comments : 0);
+  };
+
+  Photo.prototype.getDate = function() {
+    return (this._data ? new Date(this._data.date) : new Date());
+  };
+
   Photo.prototype.render = function() {
     var template = document.querySelector('#picture-template');
     this.element = ('content' in template) ? template.content.children[0].cloneNode(true) : template.children[0].cloneNode(true);

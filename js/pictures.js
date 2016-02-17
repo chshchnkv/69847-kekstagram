@@ -39,22 +39,22 @@
       case 'filter-popular':
         filteredPictures = loadedPictures.slice(0);
         filteredPictures.sort(function(a, b) {
-          return b.likes - a.likes;
+          return b.getLikes() - a.getLikes();
         }); break;
 
       case 'filter-new':
         filteredPictures = loadedPictures.filter(function(item) {
-          var itemDate = new Date(item.date);
+          var itemDate = item.getDate();
           return itemDate >= (new Date().valueOf() - (14 * 24 * 60 * 60 * 1000));
         });
         filteredPictures.sort(function(a, b) {
-          return (new Date(b.date).valueOf() - new Date(a.date).valueOf());
+          return (b.getDate().valueOf() - a.getDate().valueOf());
         }); break;
 
       case 'filter-discussed':
         filteredPictures = loadedPictures.slice(0);
         filteredPictures.sort(function(a, b) {
-          return b.comments - a.comments;
+          return b.getComments() - a.getComments();
         }); break;
 
       default:
@@ -94,7 +94,11 @@
     xhr.timeout = gl.IMAGE_TIMEOUT;
     xhr.onload = function(event) {
       var rawData = event.target.response;
-      loadedPictures = JSON.parse(rawData);
+      var rawDataArray = JSON.parse(rawData);
+      loadedPictures = rawDataArray.map(function(item) {
+        return new gl.Photo(item);
+      });
+
       /* отрисовка с фильтром, установленным при загрузке страницы */
       setActiveFilter(getActiveFilter());
       picturesLoading(false);
@@ -132,8 +136,7 @@
     var pagePictures = pictures.slice(from, to);
 
     pagePictures.forEach(function(picture) {
-      var photo = new gl.Photo(picture);
-      picturesFragment.appendChild(photo.render());
+      picturesFragment.appendChild(picture.render());
     });
     picturesElement.appendChild(picturesFragment);
 
