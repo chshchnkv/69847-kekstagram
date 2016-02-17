@@ -1,6 +1,6 @@
 'use strict';
 (function(gl) {
-  var IMAGE_TIMEOUT = 10000;
+  gl.IMAGE_TIMEOUT = 10000;
   var PAGE_SIZE = 12;
 
   var currentPicturesPage = 0;
@@ -91,7 +91,7 @@
     picturesLoading(true);
     var xhr = new XMLHttpRequest();
     xhr.open('GET', 'http://o0.github.io/assets/json/pictures.json');
-    xhr.timeout = IMAGE_TIMEOUT;
+    xhr.timeout = gl.IMAGE_TIMEOUT;
     xhr.onload = function(event) {
       var rawData = event.target.response;
       loadedPictures = JSON.parse(rawData);
@@ -132,7 +132,8 @@
     var pagePictures = pictures.slice(from, to);
 
     pagePictures.forEach(function(picture) {
-      picturesFragment.appendChild(getElementFromTemplate(picture));
+      var photo = new gl.Photo(picture);
+      picturesFragment.appendChild(photo.render());
     });
     picturesElement.appendChild(picturesFragment);
 
@@ -142,44 +143,6 @@
     */
     while (needToRenderNextPage()) {
       renderPictures(pictures, ++currentPicturesPage);
-    }
-  }
-
-  function getElementFromTemplate(picture) {
-    var template = document.querySelector('#picture-template');
-    var element = ('content' in template) ? template.content.children[0].cloneNode(true) : template.children[0].cloneNode(true);
-
-    var templateImage = element.querySelector('img');
-
-    if (element.classList.contains('picture')) {
-      element.href = picture.url;
-      element.querySelector('.picture-comments').textContent = picture.comments;
-      element.querySelector('.picture-likes').textContent = picture.likes;
-
-      var img = new Image();
-
-      img.onload = function() {
-        clearTimeout(imageLoadTimeout);
-        img.width = 182;
-        img.height = 182;
-        element.replaceChild(img, templateImage);
-      };
-
-      img.onerror = function() {
-        imageLoadFailure();
-      };
-
-      var imageLoadTimeout = setTimeout(function() {
-        imageLoadFailure();
-      }, IMAGE_TIMEOUT);
-
-      img.src = picture.url;
-
-    }
-    return element;
-
-    function imageLoadFailure() {
-      element.classList.add('picture-load-failure');
     }
   }
 })(window);
