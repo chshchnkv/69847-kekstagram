@@ -8,7 +8,8 @@
     this._closeButton = this.element.querySelector('.gallery-overlay-close');
     this._image = this.element.querySelector('.gallery-overlay-image');
     this._likes = this.element.querySelector('.likes-count');
-    this._comments = this.element.querySelector('.comments-count');
+    this._commentsCount = this.element.querySelector('.comments-count');
+    this._commentsText = this.element.querySelector('.gallery-overlay-controls-comments');
 
     this._onPhotoClick = this._onPhotoClick.bind(this);
     this._onCloseClick = this._onCloseClick.bind(this);
@@ -55,8 +56,26 @@
       var photo = this._data[pictureNumber];
 
       this._image.src = photo.getImageSrc();
-      this._comments.textContent = photo.getComments();
       this._likes.textContent = photo.getLikes();
+
+      var comments = photo.getComments();
+      this._commentsCount.textContent = comments;
+      this._commentsText.lastChild.nodeValue = this._getPluralCommentsCount(comments);
+    }
+  };
+
+  Gallery.prototype._getPluralCommentsCount = function(count) {
+    if ((count >= 10) && (count <= 20)) {
+      return ' комментариев';
+    } else {
+      var div = count % 10;
+      if ((div >= 2) && (div <= 4)) {
+        return ' комментария';
+      } else if (div === 1) {
+        return ' комментарий';
+      } else {
+        return ' комментариев';
+      }
     }
   };
 
