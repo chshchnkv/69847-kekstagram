@@ -1,6 +1,8 @@
 'use strict';
 (function(gl) {
   gl.IMAGE_TIMEOUT = 10000;
+  var gallery = new gl.Gallery();
+
   var PAGE_SIZE = 12;
 
   var currentPicturesPage = 0;
@@ -142,6 +144,8 @@
     pagePictures.forEach(function(picture) {
       picturesFragment.appendChild(picture.render());
       renderedPictures.push(picture);
+
+      picture.element.addEventListener('click', _onClick);
     });
     picturesElement.appendChild(picturesFragment);
 
@@ -152,5 +156,10 @@
     while (needToRenderNextPage()) {
       renderPictures(pictures, ++currentPicturesPage);
     }
+  }
+
+  function _onClick(event) {
+    event.preventDefault();
+    gallery.show();
   }
 })(window);
