@@ -4,10 +4,22 @@
     this._data = data;
     this.element = null;
     this._onClick = this._onClick.bind(this);
+    this._liked = false;
   }
 
   Photo.prototype.getLikes = function() {
     return (this._data ? this._data.likes : 0);
+  };
+
+  Photo.prototype.isLiked = function() {
+    return this._liked;
+  };
+
+  Photo.prototype.like = function(bool) {
+    this._liked = bool;
+    if (this._data) {
+      this._data.likes += (this._liked ? 1 : -1);
+    }
   };
 
   Photo.prototype.getComments = function() {
