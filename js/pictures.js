@@ -63,6 +63,7 @@
         filteredPictures = loadedPictures.slice(0);
     }
 
+    gallery.setPictures(filteredPictures);
     renderPictures(filteredPictures, 0, true);
   }
 
@@ -98,8 +99,8 @@
     xhr.onload = function(event) {
       var rawData = event.target.response;
       var rawDataArray = JSON.parse(rawData);
-      loadedPictures = rawDataArray.map(function(item) {
-        return new gl.Photo(item);
+      loadedPictures = rawDataArray.map(function(data) {
+        return new gl.Photo(data);
       });
 
       /* отрисовка с фильтром, установленным при загрузке страницы */
@@ -131,7 +132,8 @@
     if (replace) {
       currentPicturesPage = 0;
       renderedPictures.forEach(function(item) {
-        picturesElement.removeChild(item.element);
+        item.onClick = null;
+        item.remove(picturesElement);
       });
       renderedPictures = [];
     }
@@ -141,12 +143,14 @@
     var to = from + PAGE_SIZE;
     var pagePictures = pictures.slice(from, to);
 
-    pagePictures.forEach(function(picture) {
-      picturesFragment.appendChild(picture.render());
-      renderedPictures.push(picture);
-
-      picture.element.addEventListener('click', _onClick);
-    });
+    renderedPictures = renderedPictures.concat(pagePictures.map(function(picture) {
+      picture.render(picturesFragment);
+      picture.onClick = function() {
+        gallery.setCurrentPicture(filteredPictures.indexOf(picture));
+        gallery.show();
+      };
+      return picture;
+    }));
     picturesElement.appendChild(picturesFragment);
 
     /*
@@ -156,10 +160,5 @@
     while (needToRenderNextPage()) {
       renderPictures(pictures, ++currentPicturesPage);
     }
-  }
-
-  function _onClick(event) {
-    event.preventDefault();
-    gallery.show();
   }
 })(window);
