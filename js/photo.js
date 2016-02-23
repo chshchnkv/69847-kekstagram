@@ -4,35 +4,9 @@
     this._data = data;
     this.element = null;
     this._onClick = this._onClick.bind(this);
-    this._liked = false;
   }
 
-  Photo.prototype.getLikes = function() {
-    return (this._data ? this._data.likes : 0);
-  };
-
-  Photo.prototype.isLiked = function() {
-    return this._liked;
-  };
-
-  Photo.prototype.like = function(bool) {
-    this._liked = bool;
-    if (this._data) {
-      this._data.likes += (this._liked ? 1 : -1);
-    }
-  };
-
-  Photo.prototype.getComments = function() {
-    return (this._data ? this._data.comments : 0);
-  };
-
-  Photo.prototype.getDate = function() {
-    return (this._data ? new Date(this._data.date) : new Date());
-  };
-
-  Photo.prototype.getImageSrc = function() {
-    return (this._data ? this._data.url : '');
-  };
+  gl.inherit(Photo, gl.PhotoBase);
 
   Photo.prototype.render = function(appendTo) {
     var template = document.querySelector('#picture-template');
@@ -41,7 +15,7 @@
     var templateImage = this.element.querySelector('img');
 
     if (this.element.classList.contains('picture')) {
-      this.element.href = this._data.url;
+      this.element.href = this.getImageSrc();
       this.element.querySelector('.picture-comments').textContent = this._data.comments;
       this.element.querySelector('.picture-likes').textContent = this._data.likes;
 
@@ -96,7 +70,7 @@
     }
   };
 
-  Photo.prototype.onClick = null;
+//  Photo.prototype.onClick = null;
 
   gl.Photo = Photo;
 })(window);
