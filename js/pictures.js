@@ -1,6 +1,5 @@
 'use strict';
 module.exports = function(gl) {
-  console.log('111');
   gl.IMAGE_TIMEOUT = 10000;
 
   var Gallery = require('gallery');
