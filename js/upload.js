@@ -1,5 +1,3 @@
-/* global Resizer: true */
-
 /**
  * @fileoverview
  * @author Igor Alexeenko (o0)
@@ -7,7 +5,7 @@
 
 'use strict';
 
-(function(gl) {
+module.exports = function(gl) {
   /** @enum {string} */
   var FileType = {
     'GIF': '',
@@ -184,6 +182,7 @@
         fileReader.onload = function() {
           cleanupResizer();
 
+          var Resizer = require('./resizer');
           currentResizer = new Resizer(fileReader.result);
           currentResizer.setElement(resizeForm);
           uploadMessage.classList.add('invisible');
@@ -342,4 +341,4 @@
 
   cleanupResizer();
   updateBackground();
-})(window);
+};

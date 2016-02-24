@@ -1,8 +1,7 @@
 'use strict';
-(function(gl) {
 
-  function PhotoPreview() {}
+function PhotoPreview() {}
 
-  gl.inherit(PhotoPreview, gl.PhotoBase);
+require('./inherit')(PhotoPreview, require('./photo-base'));
 
-})(window);
+module.exports = PhotoPreview;
