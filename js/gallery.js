@@ -47,6 +47,7 @@ Gallery.prototype.hide = function() {
 
 /**
 * Обработчик щелчка по фотографии - при нажатии показывает следующую фотографию
+* @listens click
 * @private
 */
 Gallery.prototype._onPhotoClick = function() {
@@ -55,6 +56,7 @@ Gallery.prototype._onPhotoClick = function() {
 
 /**
 * Обработчик щелчка по крестику
+* @listens click
 * @private
 */
 Gallery.prototype._onCloseClick = function() {
@@ -63,6 +65,7 @@ Gallery.prototype._onCloseClick = function() {
 
 /**
 * Обработчик щелчка по лайку
+* @listens click
 * @private
 */
 Gallery.prototype._onLikeClick = function() {
@@ -86,7 +89,7 @@ Gallery.prototype._onDocumentKeyDown = function(event) {
 
 /**
 * Установка данных для галереи
-* @param {Photo[]} - массив фотографий
+* @param {Photo[]} data - массив фотографий
 */
 Gallery.prototype.setPictures = function(data) {
   this._data = data;

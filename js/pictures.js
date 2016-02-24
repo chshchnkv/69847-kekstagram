@@ -32,7 +32,7 @@ module.exports = function(gl) {
   var activeFilter = '';
 
   /**
-  * @type {Element}
+  * @type {HTMLElement}
   */
   var filters = document.querySelector('.filters');
   filters.classList.remove('hidden');
@@ -47,6 +47,7 @@ module.exports = function(gl) {
   /**
   * Выбирает текущий фильтр на основе того, какому radio установлен признак checked
   * Используется при первой загрузке и позволяет сразу применить фильтр
+  * @return {string}
   */
   function getActiveFilter() {
     var filtersRadio = document.querySelectorAll('.filters-radio');
@@ -100,7 +101,7 @@ module.exports = function(gl) {
 
   /**
   * Контейнер для загрузки изображений
-  * @type {Element}
+  * @type {HTMLElement}
   */
   var picturesElement = document.querySelector('.pictures');
 

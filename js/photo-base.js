@@ -83,6 +83,7 @@ PhotoBase.prototype.getImageSrc = function() {
 /**
 * Обработчик щелчка по фотографии с вызовом callback onClick
 * @param {Event} event - событие щелчка
+* @listens click
 * @private
 */
 PhotoBase.prototype._onClick = function(event) {
