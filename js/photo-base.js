@@ -46,6 +46,7 @@ PhotoBase.prototype.isLiked = function() {
 
 /**
 * Пользователь ставит/снимает лайк с фотографии
+* @param {boolean} bool - лайк/дизлайк
 * @param {boolean} - лайк/дизлайк
 */
 PhotoBase.prototype.like = function(bool) {
@@ -81,7 +82,7 @@ PhotoBase.prototype.getImageSrc = function() {
 
 /**
 * Обработчик щелчка по фотографии с вызовом callback onClick
-* @param {Event} - событие щелчка
+* @param {Event} event - событие щелчка
 * @private
 */
 PhotoBase.prototype._onClick = function(event) {

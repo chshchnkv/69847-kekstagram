@@ -19,7 +19,7 @@ inherit(Photo, PhotoBase);
 /**
 * Генерация DOM-элемента по шаблону для представления фотографии в списке.
 * @param {Element} appendTo - Если не null, то сгенерированный DOM-элемент будет включен последним дочерним элементом к appendTo
-* @return {Element} - возвращает сгенерированный DOM-элемент
+* @return {HTMLElement} - возвращает сгенерированный DOM-элемент
 */
 Photo.prototype.render = function(appendTo) {
   var template = document.querySelector('#picture-template');
@@ -52,7 +52,6 @@ Photo.prototype.render = function(appendTo) {
     img.src = this._data.url;
 
     this.element.addEventListener('click', this._onClick);
-
   }
 
   if (appendTo) {
@@ -83,7 +82,7 @@ Photo.prototype._imageLoadFailure = function() {
 
 /**
 * Обработчик клика по элементу фотографии, вызывает колбэк onClick
-* @param {event} - событие клика
+* @param {event} event - событие клика
 * @private
 */
 Photo.prototype._onClick = function(event) {

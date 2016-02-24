@@ -72,6 +72,7 @@ Gallery.prototype._onLikeClick = function() {
 
 /**
 * Обработчик нажатий клавиш
+* @param {Event} event - событие нажатия клавиши
 * @param {Event} - событие нажатия клавиши
 * @private
 */
@@ -107,7 +108,7 @@ Gallery.prototype._updateLikes = function() {
 
 /**
 * Установка фотографии, которую отображает галерея
-* @param {number} - номер фотографии в массиве
+* @param {number} pictureNumber - номер фотографии в массиве
 */
 Gallery.prototype.setCurrentPicture = function(pictureNumber) {
   if ((pictureNumber >= 0) && (pictureNumber < this._data.length)) {
@@ -125,7 +126,7 @@ Gallery.prototype.setCurrentPicture = function(pictureNumber) {
 
 /**
 * Склоняет слово "комментарий" в зависимости от количества
-* @param {number} - количество комментариев
+* @param {number} count - количество комментариев
 * @return {string}
 * @private
 */
