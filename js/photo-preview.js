@@ -1,7 +1,10 @@
 'use strict';
 
+var inherit = require('./inherit');
+var PhotoBase = require('./photo-base');
+
 function PhotoPreview() {}
 
-require('./inherit')(PhotoPreview, require('./photo-base'));
+inherit(PhotoPreview, PhotoBase);
 
 module.exports = PhotoPreview;

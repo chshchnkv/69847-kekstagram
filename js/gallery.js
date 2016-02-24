@@ -1,4 +1,5 @@
 'use strict';
+
 function Gallery() {
   this._data = null;
   this._currentPicture = 0;

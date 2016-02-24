@@ -1,11 +1,15 @@
 'use strict';
+
+var inherit = require('./inherit');
+var PhotoBase = require('./photo-base');
+
 function Photo(data) {
   this._data = data;
   this.element = null;
   this._onClick = this._onClick.bind(this);
 }
 
-require('./inherit')(Photo, require('./photo-base'));
+inherit(Photo, PhotoBase);
 
 Photo.prototype.render = function(appendTo) {
   var template = document.querySelector('#picture-template');

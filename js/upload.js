@@ -5,6 +5,8 @@
 
 'use strict';
 
+var Resizer = require('./resizer');
+
 module.exports = function(gl) {
   /** @enum {string} */
   var FileType = {
@@ -182,7 +184,6 @@ module.exports = function(gl) {
         fileReader.onload = function() {
           cleanupResizer();
 
-          var Resizer = require('./resizer');
           currentResizer = new Resizer(fileReader.result);
           currentResizer.setElement(resizeForm);
           uploadMessage.classList.add('invisible');
