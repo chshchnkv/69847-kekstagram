@@ -15,7 +15,7 @@
 
   /**
   * Генерация DOM-элемента по шаблону для представления фотографии в списке.
-  * @param {Element} appendTo - Если не null, то сгенерированный DOM-элемент будет включен последним дочерним элементом к appendTo
+  * @param {HTMLElement} appendTo - Если не null, то сгенерированный DOM-элемент будет включен последним дочерним элементом к appendTo
   * @return {HTMLElement} - возвращает сгенерированный DOM-элемент
   */
   Photo.prototype.render = function(appendTo) {
@@ -61,7 +61,7 @@
 
   /**
   * Удаляет обработчики событий с DOM-элемента фотографии и удаляет его из DOM-дерева
-  * @param {Element} from - DOM-элемент, из которого нужно удалить DOM-элемент фотографии
+  * @param {HTMLElement} from - DOM-элемент, из которого нужно удалить DOM-элемент фотографии
   */
   Photo.prototype.remove = function(from) {
     this.element.removeEventListener('click', this._onClick);
@@ -81,6 +81,7 @@
   /**
   * Обработчик клика по элементу фотографии, вызывает колбэк onClick
   * @param {Event} event - событие клика
+  * @listens click
   * @private
   */
   Photo.prototype._onClick = function(event) {

@@ -28,7 +28,7 @@
   var activeFilter = '';
 
   /**
-  * @type {Element}
+  * @type {HTMLElement}
   */
   var filters = document.querySelector('.filters');
   filters.classList.remove('hidden');
@@ -96,7 +96,7 @@
 
   /**
   * Контейнер для загрузки изображений
-  * @type {Element}
+  * @type {HTMLElement}
   */
   var picturesElement = document.querySelector('.pictures');
 

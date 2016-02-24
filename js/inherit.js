@@ -2,8 +2,8 @@
 (function(gl) {
   /**
   * Наследует объект от другого
-  * @param {Function} - child of parent
-  * @param {Function} - parent of child
+  * @param {Function} child - child of parent
+  * @param {Function} parent - parent of child
   */
   gl.inherit = function(child, parent) {
     function EmptyCtor() {}
