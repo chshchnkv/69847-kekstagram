@@ -43,6 +43,7 @@
   /**
   * Выбирает текущий фильтр на основе того, какому radio установлен признак checked
   * Используется при первой загрузке и позволяет сразу применить фильтр
+  * @return {string}
   */
   function getActiveFilter() {
     var filtersRadio = document.querySelectorAll('.filters-radio');
