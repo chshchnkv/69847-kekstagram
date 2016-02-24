@@ -53,7 +53,7 @@
 
   /**
   * Устанавливает текущий фильтр по идентификатору
-  * @param {string} - устанавливаемый фильтр
+  * @param {string} id - устанавливаемый фильтр
   */
   function setActiveFilter(id) {
 
@@ -181,7 +181,7 @@
 
   /**
   * Показывает или скрывает крутилку загрузки фотографий
-  * @param {boolean} - показать или скрыть крутилку
+  * @param {boolean} start - показать или скрыть крутилку
   */
   function picturesLoading(start) {
     if (start) {
@@ -193,9 +193,9 @@
 
   /**
   * Отрисовка фотографий на странице
-  * @param {Photo[]} - массив фотографий для отрисовки
-  * @param {number} - номер страницы, которую нужно отрисовать
-  * @param {boolean} - true если нужно заменить имеющиеся фотографии на странице
+  * @param {Photo[]} pictures - массив фотографий для отрисовки
+  * @param {number} page - номер страницы, которую нужно отрисовать
+  * @param {boolean} replace - true если нужно заменить имеющиеся фотографии на странице
   */
   function renderPictures(pictures, page, replace) {
     page = page || 0;

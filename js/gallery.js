@@ -72,7 +72,8 @@
 
   /**
   * Обработчик нажатий клавиш
-  * @param {Event} - событие нажатия клавиши
+  * @param {Event} event - событие нажатия клавиши
+  * @listens keydown
   * @private
   */
   Gallery.prototype._onDocumentKeyDown = function(event) {
@@ -107,7 +108,7 @@
 
   /**
   * Установка фотографии, которую отображает галерея
-  * @param {number} - номер фотографии в массиве
+  * @param {number} pictureNumber - номер фотографии в массиве
   */
   Gallery.prototype.setCurrentPicture = function(pictureNumber) {
     if ((pictureNumber >= 0) && (pictureNumber < this._data.length)) {
@@ -125,7 +126,7 @@
 
   /**
   * Склоняет слово "комментарий" в зависимости от количества
-  * @param {number} - количество комментариев
+  * @param {number} count - количество комментариев
   * @return {string}
   * @private
   */

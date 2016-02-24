@@ -1,7 +1,7 @@
 'use strict';
 (function(gl) {
   /**
-  * Продляет цепочку прототипов
+  * Наследует объект от другого
   * @param {Function} - child of parent
   * @param {Function} - parent of child
   */

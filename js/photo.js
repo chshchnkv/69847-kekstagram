@@ -16,7 +16,7 @@
   /**
   * Генерация DOM-элемента по шаблону для представления фотографии в списке.
   * @param {Element} appendTo - Если не null, то сгенерированный DOM-элемент будет включен последним дочерним элементом к appendTo
-  * @return {Element} - возвращает сгенерированный DOM-элемент
+  * @return {HTMLElement} - возвращает сгенерированный DOM-элемент
   */
   Photo.prototype.render = function(appendTo) {
     var template = document.querySelector('#picture-template');
@@ -80,7 +80,7 @@
 
   /**
   * Обработчик клика по элементу фотографии, вызывает колбэк onClick
-  * @param {event} - событие клика
+  * @param {Event} event - событие клика
   * @private
   */
   Photo.prototype._onClick = function(event) {
