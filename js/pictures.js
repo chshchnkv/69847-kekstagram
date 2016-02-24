@@ -1,35 +1,13 @@
 'use strict';
 (function(gl) {
-  /**
-  * @const
-  * @type {number}
-  */
   gl.IMAGE_TIMEOUT = 10000;
-
-  /**
-  * @type {Gallery}
-  */
   var gallery = new gl.Gallery();
 
-  /**
-  * @const
-  * @type {number}
-  */
   var PAGE_SIZE = 12;
 
-  /**
-  * @type {number}
-  */
   var currentPicturesPage = 0;
 
-  /**
-  * @type {string}
-  */
   var activeFilter = '';
-
-  /**
-  * @type {HTMLElement}
-  */
   var filters = document.querySelector('.filters');
   filters.classList.remove('hidden');
 
@@ -40,11 +18,8 @@
     }
   });
 
-  /**
-  * Выбирает текущий фильтр на основе того, какому radio установлен признак checked
-  * Используется при первой загрузке и позволяет сразу применить фильтр
-  * @return {string}
-  */
+  /// выбирает текущий фильтр на основе того, какому radio установлен признак checked
+  /// используется при первой загрузке и позволяет сразу применить фильтр
   function getActiveFilter() {
     var filtersRadio = document.querySelectorAll('.filters-radio');
     return [].filter.call(filtersRadio, function(item) {
@@ -52,10 +27,7 @@
     })[0].id;
   }
 
-  /**
-  * Устанавливает текущий фильтр по идентификатору
-  * @param {string} id - устанавливаемый фильтр
-  */
+  /// устанавливает текущий фильтр по идентификатору
   function setActiveFilter(id) {
 
     if (activeFilter === id) {
@@ -95,36 +67,13 @@
     renderPictures(filteredPictures, 0, true);
   }
 
-  /**
-  * Контейнер для загрузки изображений
-  * @type {HTMLElement}
-  */
+  /// Контейнер для загрузки изображений
   var picturesElement = document.querySelector('.pictures');
-
-  /**
-  * Загруженные с сервера фотографии
-  * @type {Photo[]}
-  */
   var loadedPictures = [];
-
-  /**
-  * Отфильтрованные фотографии
-  * @type {Photo[]}
-  */
   var filteredPictures = [];
-
-  /**
-  * Фотографии отрисованные на странице
-  * @type {Photo[]}
-  */
   var renderedPictures = [];
-
   getPictures();
 
-  /**
-  * Таймер для фильтрации событий scroll
-  * @type {number}
-  */
   var scrollTimeout;
   gl.addEventListener('scroll', function() {
     clearTimeout(scrollTimeout);
@@ -135,20 +84,13 @@
     }, 100);
   });
 
-  /**
-  * Проверяет нужно ли отрисовывать следующую страницу фотографий
-  * Если нижний ряд фотографий в контейнере изображений отображается на экране наполовину и больше и выведены не все фотографии, значит нужно загрузить следующую страницу
-  * @return {boolean}
-  */
   function needToRenderNextPage() {
     /*
+     если нижняя ряд фотографий в контейнере изображений отображается на экране наполовину и больше и выведены не все фотографии, значит нужно загрузить следующую страницу
     */
     return ((PAGE_SIZE * (currentPicturesPage + 1)) < filteredPictures.length) && (picturesElement.getBoundingClientRect().bottom - (182 / 2) <= gl.innerHeight);
   }
 
-  /**
-  * Загрузка фотографий с сервера
-  */
   function getPictures() {
     picturesLoading(true);
     var xhr = new XMLHttpRequest();
@@ -172,18 +114,11 @@
     xhr.send();
   }
 
-  /**
-  * Ставит заглушку если загрузка фотографий не удалась
-  */
   function pictureFailure() {
     picturesLoading(false);
     picturesElement.classList.add('pictures-failure');
   }
 
-  /**
-  * Показывает или скрывает крутилку загрузки фотографий
-  * @param {boolean} start - показать или скрыть крутилку
-  */
   function picturesLoading(start) {
     if (start) {
       picturesElement.classList.add('pictures-loading');
@@ -192,12 +127,6 @@
     }
   }
 
-  /**
-  * Отрисовка фотографий на странице
-  * @param {Photo[]} pictures - массив фотографий для отрисовки
-  * @param {number} page - номер страницы, которую нужно отрисовать
-  * @param {boolean} replace - true если нужно заменить имеющиеся фотографии на странице
-  */
   function renderPictures(pictures, page, replace) {
     page = page || 0;
     if (replace) {
