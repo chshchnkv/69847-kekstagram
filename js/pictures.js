@@ -41,33 +41,15 @@
   });
 
   /**
-  * В момент загрузки определяет какой фильтр нужно установить. Если фильтр ранее не был сохранен в localStorage, то выбирается элемент, который установлен в html-документе
+  * Выбирает текущий фильтр на основе того, какому radio установлен признак checked
+  * Используется при первой загрузке и позволяет сразу применить фильтр
   * @return {string}
   */
-  function restoreActiveFilter() {
-    var filterToCheck = localStorage.getItem('activeFilter') || getCheckedFilter();
-    setCheckedFilter(filterToCheck);
-    return filterToCheck;
-  }
-
-  /**
-  * Возвращает Id элемента, который установлен в html
-  * @return {string}
-  */
-  function getCheckedFilter() {
+  function getActiveFilter() {
     var filtersRadio = document.querySelectorAll('.filters-radio');
     return [].filter.call(filtersRadio, function(item) {
       return item.checked;
     })[0].id;
-  }
-
-  /**
-  * Устанавливает checked в true для radio с указанным Id
-  * @param {string} id - идентификатор radio
-  */
-  function setCheckedFilter(id) {
-    var filterRadio = document.getElementById(id);
-    filterRadio.checked = true;
   }
 
   /**
@@ -81,7 +63,6 @@
     }
 
     activeFilter = id;
-    localStorage.setItem('activeFilter', activeFilter);
 
     switch (activeFilter) {
 
@@ -181,7 +162,7 @@
       });
 
       /* отрисовка с фильтром, установленным при загрузке страницы */
-      setActiveFilter(restoreActiveFilter());
+      setActiveFilter(getActiveFilter());
       picturesLoading(false);
     };
 
