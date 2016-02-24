@@ -1,5 +1,3 @@
-/* global Resizer: true */
-
 /**
  * @fileoverview
  * @author Igor Alexeenko (o0)
@@ -7,7 +5,9 @@
 
 'use strict';
 
-(function(gl) {
+var Resizer = require('./resizer');
+
+module.exports = function(gl) {
   /** @enum {string} */
   var FileType = {
     'GIF': '',
@@ -342,4 +342,4 @@
 
   cleanupResizer();
   updateBackground();
-})(window);
+};

@@ -1,7 +1,12 @@
 'use strict';
-(function(gl) {
+
+var Gallery = require('gallery');
+var Photo = require('photo');
+
+module.exports = function(gl) {
   gl.IMAGE_TIMEOUT = 10000;
-  var gallery = new gl.Gallery();
+
+  var gallery = new Gallery();
 
   var PAGE_SIZE = 12;
 
@@ -100,7 +105,7 @@
       var rawData = event.target.response;
       var rawDataArray = JSON.parse(rawData);
       loadedPictures = rawDataArray.map(function(data) {
-        return new gl.Photo(data);
+        return new Photo(data);
       });
 
       /* отрисовка с фильтром, установленным при загрузке страницы */
@@ -161,4 +166,4 @@
       renderPictures(pictures, ++currentPicturesPage);
     }
   }
-})(window);
+};
