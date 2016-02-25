@@ -240,8 +240,7 @@ module.exports = function(gl) {
     renderedPictures = renderedPictures.concat(pagePictures.map(function(picture) {
       picture.render(picturesFragment);
       picture.onClick = function() {
-        gallery.setCurrentPicture(filteredPictures.indexOf(picture));
-        gallery.show();
+        location.hash = location.hash.indexOf('photo') !== -1 ? '' : 'photo/' + picture.getImageSrc();
       };
       return picture;
     }));
@@ -253,6 +252,33 @@ module.exports = function(gl) {
     */
     while (needToRenderNextPage()) {
       renderPictures(pictures, ++currentPicturesPage);
+    }
+  }
+
+  window.addEventListener('hashchange', _onHashChange);
+  window.addEventListener('load', _onLoad);
+
+  /**
+  * Обработчик загрузки страницы проверит адресную строку и покажет галерею при необходимости
+  * @listens load
+  * @private
+  */
+  function _onLoad() {
+    _onHashChange();
+  }
+
+  /**
+  * Обработка изменения хэша адресной строки
+  * @param {Event} event - событие смены хэша адресной строки
+  * @listens hashchange
+  * @private
+  */
+  function _onHashChange() {
+    debugger;
+    var matchUrls = location.hash.match(/#photo\/(\S+)/);
+    if (matchUrls) {
+      gallery.setCurrentPicture(matchUrls[1]);
+      gallery.show();
     }
   }
 };
