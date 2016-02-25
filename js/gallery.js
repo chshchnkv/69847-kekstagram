@@ -38,6 +38,7 @@ Gallery.prototype.show = function() {
 * Скрывает галерею и удаляет обработчики событий
 */
 Gallery.prototype.hide = function() {
+  location.hash = '';
   this.element.classList.add('invisible');
   this._image.removeEventListener('click', this._onPhotoClick);
   this._closeButton.removeEventListener('click', this._onCloseClick);
@@ -111,13 +112,29 @@ Gallery.prototype._updateLikes = function() {
 
 /**
 * Установка фотографии, которую отображает галерея
-* @param {number} pictureNumber - номер фотографии в массиве
+* @param {number|string} pictureId - номер фотографии в массиве или url фотографии
 */
-Gallery.prototype.setCurrentPicture = function(pictureNumber) {
-  if ((pictureNumber >= 0) && (pictureNumber < this._data.length)) {
-    this._currentPicture = pictureNumber;
-    this._currentPhoto = this._data[pictureNumber];
+Gallery.prototype.setCurrentPicture = function(pictureId) {
+  switch (typeof pictureId) {
+    case 'number': {
+      if ((pictureId >= 0) && (pictureId < this._data.length)) {
+        this._currentPicture = pictureId;
+        this._currentPhoto = this._data[pictureId];
+      }
+      break;
+    }
+    case 'string': {
+      for (var i = 0; i < this._data.length; i++) {
+        if (this._data[i].getImageSrc() === pictureId) {
+          this._currentPicture = i;
+          this._currentPhoto = this._data[i];
+          break;
+        }
+      }
+    }
+  }
 
+  if (this._currentPhoto) {
     this._image.src = this._currentPhoto.getImageSrc();
     this._updateLikes();
 
@@ -125,6 +142,7 @@ Gallery.prototype.setCurrentPicture = function(pictureNumber) {
     this._commentsCount.textContent = comments;
     this._commentsText.lastChild.nodeValue = this._getPluralCommentsCount(comments);
   }
+
 };
 
 /**
@@ -149,17 +167,42 @@ Gallery.prototype._getPluralCommentsCount = function(count) {
 };
 
 /**
+* Возвращает фотографию по индексу в массиве
+* @param {number} pictureNumber - номер фото в массиве
+* @private
+*/
+Gallery.prototype._getPictureByNumber = function(pictureNumber) {
+  if ((pictureNumber >= 0) && (pictureNumber < this._data.length)) {
+    return this._data[pictureNumber];
+  } else {
+    return null;
+  }
+};
+
+/**
+* Изменение хэша в адресной строке для отображения изображения отличного от текущего
+* @param {number} pictureNumber - номер фотографии претендента
+* @private
+*/
+Gallery.prototype._switchPhoto = function(pictureNumber) {
+  var newPhoto = this._getPictureByNumber(pictureNumber);
+  if (newPhoto) {
+    location.hash = '#photo/' + newPhoto.getImageSrc();
+  }
+};
+
+/**
 * Показывает следующую фотографию в массиве
 */
 Gallery.prototype.nextPicture = function() {
-  this.setCurrentPicture(this._currentPicture + 1);
+  this._switchPhoto(this._currentPicture + 1);
 };
 
 /**
 * Показывает предыдущую фотографию в массиве
 */
 Gallery.prototype.previousPicture = function() {
-  this.setCurrentPicture(this._currentPicture - 1);
+  this._switchPhoto(this._currentPicture - 1);
 };
 
 module.exports = Gallery;
