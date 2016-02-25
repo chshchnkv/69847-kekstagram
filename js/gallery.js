@@ -1,5 +1,9 @@
 'use strict';
 
+/*
+* Галерея фотографий
+* @constructor
+*/
 function Gallery() {
   this._data = null;
   this._currentPicture = 0;
@@ -19,6 +23,9 @@ function Gallery() {
   this._onDocumentKeyDown = this._onDocumentKeyDown.bind(this);
 }
 
+/**
+* Показ галереи с установкой обработчиков событий
+*/
 Gallery.prototype.show = function() {
   this.element.classList.remove('invisible');
   this._image.addEventListener('click', this._onPhotoClick);
@@ -27,6 +34,9 @@ Gallery.prototype.show = function() {
   document.addEventListener('keydown', this._onDocumentKeyDown);
 };
 
+/**
+* Скрывает галерею и удаляет обработчики событий
+*/
 Gallery.prototype.hide = function() {
   this.element.classList.add('invisible');
   this._image.removeEventListener('click', this._onPhotoClick);
@@ -35,19 +45,40 @@ Gallery.prototype.hide = function() {
   document.removeEventListener('keydown', this._onDocumentKeyDown);
 };
 
+/**
+* Обработчик щелчка по фотографии - при нажатии показывает следующую фотографию
+* @listens click
+* @private
+*/
 Gallery.prototype._onPhotoClick = function() {
   this.nextPicture();
 };
 
+/**
+* Обработчик щелчка по крестику
+* @listens click
+* @private
+*/
 Gallery.prototype._onCloseClick = function() {
   this.hide();
 };
 
+/**
+* Обработчик щелчка по лайку
+* @listens click
+* @private
+*/
 Gallery.prototype._onLikeClick = function() {
   this._currentPhoto.like(!this._likes.classList.contains('likes-count-liked'));
   this._updateLikes();
 };
 
+/**
+* Обработчик нажатий клавиш
+* @param {Event} event - событие нажатия клавиши
+* @param {Event} - событие нажатия клавиши
+* @private
+*/
 Gallery.prototype._onDocumentKeyDown = function(event) {
   switch (event.keyCode) {
     case 27: this.hide(); break;
@@ -56,10 +87,18 @@ Gallery.prototype._onDocumentKeyDown = function(event) {
   }
 };
 
+/**
+* Установка данных для галереи
+* @param {Photo[]} data - массив фотографий
+*/
 Gallery.prototype.setPictures = function(data) {
   this._data = data;
 };
 
+/**
+* Синхронизация лайков
+* @private
+*/
 Gallery.prototype._updateLikes = function() {
   var photo = this._data[this._currentPicture];
   this._likes.textContent = photo.getLikes();
@@ -70,6 +109,10 @@ Gallery.prototype._updateLikes = function() {
   }
 };
 
+/**
+* Установка фотографии, которую отображает галерея
+* @param {number} pictureNumber - номер фотографии в массиве
+*/
 Gallery.prototype.setCurrentPicture = function(pictureNumber) {
   if ((pictureNumber >= 0) && (pictureNumber < this._data.length)) {
     this._currentPicture = pictureNumber;
@@ -84,6 +127,12 @@ Gallery.prototype.setCurrentPicture = function(pictureNumber) {
   }
 };
 
+/**
+* Склоняет слово "комментарий" в зависимости от количества
+* @param {number} count - количество комментариев
+* @return {string}
+* @private
+*/
 Gallery.prototype._getPluralCommentsCount = function(count) {
   if ((count >= 10) && (count <= 20)) {
     return ' комментариев';
@@ -99,10 +148,16 @@ Gallery.prototype._getPluralCommentsCount = function(count) {
   }
 };
 
+/**
+* Показывает следующую фотографию в массиве
+*/
 Gallery.prototype.nextPicture = function() {
   this.setCurrentPicture(this._currentPicture + 1);
 };
 
+/**
+* Показывает предыдущую фотографию в массиве
+*/
 Gallery.prototype.previousPicture = function() {
   this.setCurrentPicture(this._currentPicture - 1);
 };

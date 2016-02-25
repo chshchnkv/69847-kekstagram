@@ -3,6 +3,11 @@
 var inherit = require('./inherit');
 var PhotoBase = require('./photo-base');
 
+/**
+* Фотография в списке.
+* @constructor
+* @param {Object} data - данные, загруженные для одной фотографии
+*/
 function Photo(data) {
   this._data = data;
   this.element = null;
@@ -11,6 +16,11 @@ function Photo(data) {
 
 inherit(Photo, PhotoBase);
 
+/**
+* Генерация DOM-элемента по шаблону для представления фотографии в списке.
+* @param {HTMLElement} appendTo - Если не null, то сгенерированный DOM-элемент будет включен последним дочерним элементом к appendTo
+* @return {HTMLElement} - возвращает сгенерированный DOM-элемент
+*/
 Photo.prototype.render = function(appendTo) {
   var template = document.querySelector('#picture-template');
   this.element = ('content' in template) ? template.content.children[0].cloneNode(true) : template.children[0].cloneNode(true);
@@ -42,7 +52,6 @@ Photo.prototype.render = function(appendTo) {
     img.src = this._data.url;
 
     this.element.addEventListener('click', this._onClick);
-
   }
 
   if (appendTo) {
@@ -52,6 +61,10 @@ Photo.prototype.render = function(appendTo) {
   return this.element;
 };
 
+/**
+* Удаляет обработчики событий с DOM-элемента фотографии и удаляет его из DOM-дерева
+* @param {HTMLElement} from - DOM-элемент, из которого нужно удалить DOM-элемент фотографии
+*/
 Photo.prototype.remove = function(from) {
   this.element.removeEventListener('click', this._onClick);
   if (from) {
@@ -59,10 +72,19 @@ Photo.prototype.remove = function(from) {
   }
 };
 
+/**
+* Отображает заглушку, если загрузка фотографии не удалась
+* @private
+*/
 Photo.prototype._imageLoadFailure = function() {
   this.element.classList.add('picture-load-failure');
 };
 
+/**
+* Обработчик клика по элементу фотографии, вызывает колбэк onClick
+* @param {event} event - событие клика
+* @private
+*/
 Photo.prototype._onClick = function(event) {
   event.preventDefault();
   if (event.target.tagName === 'IMG' &&
