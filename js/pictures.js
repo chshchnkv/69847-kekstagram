@@ -274,7 +274,6 @@ module.exports = function(gl) {
   * @private
   */
   function _onHashChange() {
-    debugger;
     var matchUrls = location.hash.match(/#photo\/(\S+)/);
     if (matchUrls) {
       gallery.setCurrentPicture(matchUrls[1]);
