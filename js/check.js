@@ -12,11 +12,11 @@
     } else if (a.length > 0) {
       var square = 0, i = 0, sum = 0;
       if (b.length > 0 && a.length === b.length) {
-        
+
         for (i = 0; i < a.length; i += 1) {
           square += a[i] * b[i];
         }
-        
+
         return "Общая площадь артефактов сжатия: " + square + " пикселей";
       } else {
         sum = a.reduce(function (sum, current) {
@@ -25,9 +25,8 @@
 
         return "Количество красных точек во всех строчках изображения: " + sum;
       }
-      
+
     }
   };
-  
-  
+
 }(window));

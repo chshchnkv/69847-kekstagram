@@ -17,5 +17,13 @@ module.exports = {
 
   resolve: {
     modulesDirectories: ['node_modules', './js', './lib', './vendor']
+  },
+
+  module: {
+    loaders: [{
+      test: /\.jsx?$/,
+      exclude: /node_modules/,
+      loader: 'babel-loader'}
+    ]
   }
 };

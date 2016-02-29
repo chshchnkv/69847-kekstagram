@@ -155,7 +155,7 @@ Gallery.prototype._getPluralCommentsCount = function(count) {
   if ((count >= 10) && (count <= 20)) {
     return ' комментариев';
   } else {
-    var div = count % 10;
+    let div = count % 10;
     if ((div >= 2) && (div <= 4)) {
       return ' комментария';
     } else if (div === 1) {

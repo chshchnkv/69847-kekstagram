@@ -19,7 +19,7 @@ module.exports = function(gl) {
   * @const
   * @type {number}
   */
-  var PAGE_SIZE = 12;
+  const PAGE_SIZE = 12;
 
   /**
   * @type {number}
@@ -38,7 +38,7 @@ module.exports = function(gl) {
   filters.classList.remove('hidden');
 
   /// Обработка событий при кликах на фильтрах
-  filters.addEventListener('change', function(event) {
+  filters.addEventListener('change', (event) => {
     if (event.target.classList.contains('filters-radio')) {
       setActiveFilter(event.target.id);
     }
@@ -60,7 +60,7 @@ module.exports = function(gl) {
   */
   function getCheckedFilter() {
     var filtersRadio = document.querySelectorAll('.filters-radio');
-    return [].filter.call(filtersRadio, function(item) {
+    return [].filter.call(filtersRadio, (item) => {
       return item.checked;
     })[0].id;
   }
@@ -91,22 +91,22 @@ module.exports = function(gl) {
 
       case 'filter-popular':
         filteredPictures = loadedPictures.slice(0);
-        filteredPictures.sort(function(a, b) {
+        filteredPictures.sort((a, b) => {
           return b.getLikes() - a.getLikes();
         }); break;
 
       case 'filter-new':
-        filteredPictures = loadedPictures.filter(function(item) {
-          var itemDate = item.getDate();
+        filteredPictures = loadedPictures.filter((item) => {
+          let itemDate = item.getDate();
           return itemDate >= (new Date().valueOf() - (14 * 24 * 60 * 60 * 1000));
         });
-        filteredPictures.sort(function(a, b) {
+        filteredPictures.sort((a, b) => {
           return (b.getDate().valueOf() - a.getDate().valueOf());
         }); break;
 
       case 'filter-discussed':
         filteredPictures = loadedPictures.slice(0);
-        filteredPictures.sort(function(a, b) {
+        filteredPictures.sort((a, b) => {
           return b.getComments() - a.getComments();
         }); break;
 
@@ -149,9 +149,9 @@ module.exports = function(gl) {
   * @type {number}
   */
   var scrollTimeout;
-  gl.addEventListener('scroll', function() {
+  gl.addEventListener('scroll', () => {
     clearTimeout(scrollTimeout);
-    scrollTimeout = setTimeout(function() {
+    scrollTimeout = setTimeout(() => {
       if (needToRenderNextPage()) {
         renderPictures(filteredPictures, ++currentPicturesPage);
       }
@@ -164,8 +164,6 @@ module.exports = function(gl) {
   * @return {boolean}
   */
   function needToRenderNextPage() {
-    /*
-    */
     return ((PAGE_SIZE * (currentPicturesPage + 1)) < filteredPictures.length) && (picturesElement.getBoundingClientRect().bottom - (182 / 2) <= gl.innerHeight);
   }
 
@@ -174,19 +172,20 @@ module.exports = function(gl) {
   */
   function getPictures() {
     picturesLoading(true);
-    var xhr = new XMLHttpRequest();
+    let xhr = new XMLHttpRequest();
     xhr.open('GET', 'http://o0.github.io/assets/json/pictures.json');
     xhr.timeout = gl.IMAGE_TIMEOUT;
-    xhr.onload = function(event) {
-      var rawData = event.target.response;
-      var rawDataArray = JSON.parse(rawData);
-      loadedPictures = rawDataArray.map(function(data) {
+    xhr.onload = (event) => {
+      let rawData = event.target.response;
+      let rawDataArray = JSON.parse(rawData);
+      loadedPictures = rawDataArray.map((data) => {
         return new Photo(data);
       });
 
       /* отрисовка с фильтром, установленным при загрузке страницы */
       setActiveFilter(restoreActiveFilter());
       picturesLoading(false);
+      _onHashChange();
     };
 
     xhr.onerror = pictureFailure;
@@ -225,7 +224,7 @@ module.exports = function(gl) {
     page = page || 0;
     if (replace) {
       currentPicturesPage = 0;
-      renderedPictures.forEach(function(item) {
+      renderedPictures.forEach((item) => {
         item.onClick = null;
         item.remove(picturesElement);
       });
@@ -233,13 +232,13 @@ module.exports = function(gl) {
     }
     var picturesFragment = document.createDocumentFragment();
 
-    var from = page * PAGE_SIZE;
-    var to = from + PAGE_SIZE;
-    var pagePictures = pictures.slice(from, to);
+    let from = page * PAGE_SIZE;
+    let to = from + PAGE_SIZE;
+    let pagePictures = pictures.slice(from, to);
 
-    renderedPictures = renderedPictures.concat(pagePictures.map(function(picture) {
+    renderedPictures = renderedPictures.concat(pagePictures.map((picture) => {
       picture.render(picturesFragment);
-      picture.onClick = function() {
+      picture.onClick = () => {
         location.hash = location.hash.indexOf('photo') !== -1 ? '' : 'photo/' + picture.getImageSrc();
       };
       return picture;
@@ -256,16 +255,6 @@ module.exports = function(gl) {
   }
 
   window.addEventListener('hashchange', _onHashChange);
-  window.addEventListener('load', _onLoad);
-
-  /**
-  * Обработчик загрузки страницы проверит адресную строку и покажет галерею при необходимости
-  * @listens load
-  * @private
-  */
-  function _onLoad() {
-    _onHashChange();
-  }
 
   /**
   * Обработка изменения хэша адресной строки
@@ -274,7 +263,7 @@ module.exports = function(gl) {
   * @private
   */
   function _onHashChange() {
-    var matchUrls = location.hash.match(/#photo\/(\S+)/);
+    let matchUrls = location.hash.match(/#photo\/(\S+)/);
     if (matchUrls) {
       gallery.setCurrentPicture(matchUrls[1]);
       gallery.show();

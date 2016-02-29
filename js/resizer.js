@@ -103,8 +103,8 @@ Resizer.prototype = {
     // Установка начальной точки системы координат в центр холста.
     this._ctx.translate(this._container.width / 2, this._container.height / 2);
 
-    var displX = -(this._resizeConstraint.x + this._resizeConstraint.side / 2);
-    var displY = -(this._resizeConstraint.y + this._resizeConstraint.side / 2);
+    let displX = -(this._resizeConstraint.x + this._resizeConstraint.side / 2);
+    let displY = -(this._resizeConstraint.y + this._resizeConstraint.side / 2);
     // Отрисовка изображения на холсте. Параметры задают изображение, которое
     // нужно отрисовать и координаты его верхнего левого угла.
     // Координаты задаются от центра холста.
@@ -121,11 +121,11 @@ Resizer.prototype = {
     this._ctx.lineTo(-this._container.width / 2, this._container.height / 2);
     this._ctx.lineTo(-this._container.width / 2, -this._container.height / 2);
 
-    var lineWidth = 6;
-    var gap = 7;
+    let lineWidth = 6;
+    let gap = 7;
     // Задаём внутренний контур
-    var topX = -this._resizeConstraint.side / 2;
-    var topY = -this._resizeConstraint.side / 2 - lineWidth;
+    let topX = -this._resizeConstraint.side / 2;
+    let topY = -this._resizeConstraint.side / 2 - lineWidth;
 
     this._ctx.moveTo(topX, topY);
     this._ctx.lineTo(topX + this._resizeConstraint.side, topY);
@@ -141,7 +141,7 @@ Resizer.prototype = {
     this._ctx.textAlign = 'center';
     this._ctx.fillStyle = '#fff';
 
-    var sizeText = this._image.naturalWidth + ' x ' + this._image.naturalHeight;
+    let sizeText = this._image.naturalWidth + ' x ' + this._image.naturalHeight;
 
     this._ctx.fillText(sizeText, 0, topY - this._ctx.lineWidth - (fontSize / 2), this._resizeConstraint.side);
 
@@ -210,10 +210,10 @@ Resizer.prototype = {
    * @private
   */
   _createBorderSide: function(x, y, offset, sideSize, lineWeight, gap, lineColor, lineType, directionX, directionY) {
-    var step = lineWeight + gap;
-    var limitX = x + directionX * sideSize;
-    var limitY = y + directionY * sideSize;
-    var d = 0;
+    let step = lineWeight + gap;
+    let limitX = x + directionX * sideSize;
+    let limitY = y + directionY * sideSize;
+    let d = 0;
 
     x += directionX * offset;
     y += directionY * offset;
@@ -348,10 +348,10 @@ Resizer.prototype = {
       this._resizeConstraint.side = side;
     }
 
-    requestAnimationFrame(function() {
+    requestAnimationFrame(() => {
       this.redraw();
       window.dispatchEvent(new CustomEvent('resizerchange'));
-    }.bind(this));
+    });
   },
 
   /**
@@ -372,15 +372,15 @@ Resizer.prototype = {
    */
   exportImage: function() {
     // Создаем Image, с размерами, указанными при кадрировании.
-    var imageToExport = new Image();
+    let imageToExport = new Image();
 
     // Создается новый canvas, по размерам совпадающий с кадрированным
     // изображением, в него добавляется изображение взятое из канваса
     // с измененными координатами и сохраняется в dataURL, с помощью метода
     // toDataURL. Полученный исходный код, записывается в src у ранее
     // созданного изображения.
-    var temporaryCanvas = document.createElement('canvas');
-    var temporaryCtx = temporaryCanvas.getContext('2d');
+    let temporaryCanvas = document.createElement('canvas');
+    let temporaryCtx = temporaryCanvas.getContext('2d');
     temporaryCanvas.width = this._resizeConstraint.side;
     temporaryCanvas.height = this._resizeConstraint.side;
     temporaryCtx.drawImage(this._image,
