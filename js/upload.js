@@ -56,14 +56,14 @@ module.exports = function(gl) {
    * Ставит одну из трех случайных картинок на фон формы загрузки.
    */
   function updateBackground() {
-    var images = [
+    let images = [
       'img/logo-background-1.jpg',
       'img/logo-background-2.jpg',
       'img/logo-background-3.jpg'
     ];
 
-    var backgroundElement = document.querySelector('.upload');
-    var randomImageNumber = Math.round(Math.random() * (images.length - 1));
+    let backgroundElement = document.querySelector('.upload');
+    let randomImageNumber = Math.round(Math.random() * (images.length - 1));
     backgroundElement.style.backgroundImage = 'url(' + images[randomImageNumber] + ')';
   }
 
@@ -72,9 +72,9 @@ module.exports = function(gl) {
    * @return {boolean}
    */
   function resizeFormIsValid() {
-    var resizeLeft = +resizeForm.elements['resize-x'].value;
-    var resizeTop = +resizeForm.elements['resize-y'].value;
-    var resizeSize = +resizeForm.elements['resize-size'].value;
+    let resizeLeft = +resizeForm.elements['resize-x'].value;
+    let resizeTop = +resizeForm.elements['resize-y'].value;
+    let resizeSize = +resizeForm.elements['resize-size'].value;
 
     if ((resizeLeft < 0) || (resizeTop < 0) || (resizeSize < 0)) {
       return false;
@@ -141,7 +141,7 @@ module.exports = function(gl) {
    * @return {Element}
    */
   function showMessage(action, message) {
-    var isError = false;
+    let isError = false;
 
     switch (action) {
       case Action.UPLOADING:
@@ -171,17 +171,17 @@ module.exports = function(gl) {
    * и показывается форма кадрирования.
    * @param {Event} evt
    */
-  uploadForm.addEventListener('change', function(evt) {
-    var element = evt.target;
+  uploadForm.addEventListener('change', (evt) => {
+    let element = evt.target;
     if (element.id === 'upload-file') {
       // Проверка типа загружаемого файла, тип должен быть изображением
       // одного из форматов: JPEG, PNG, GIF или SVG.
       if (fileRegExp.test(element.files[0].type)) {
-        var fileReader = new FileReader();
+        let fileReader = new FileReader();
 
         showMessage(Action.UPLOADING);
 
-        fileReader.onload = function() {
+        fileReader.onload = () => {
           cleanupResizer();
 
           currentResizer = new Resizer(fileReader.result);
@@ -206,7 +206,7 @@ module.exports = function(gl) {
   function updateResizeForm() {
     validateResizeForm(resizeFormIsValid());
     if (currentResizer !== null) {
-      var constraint = currentResizer.getConstraint();
+      let constraint = currentResizer.getConstraint();
       resizeForm.elements['resize-x'].value = Math.floor(constraint.x);
       resizeForm.elements['resize-y'].value = Math.floor(constraint.y);
       resizeForm.elements['resize-size'].value = Math.floor(constraint.side);
@@ -225,7 +225,7 @@ module.exports = function(gl) {
    * и обновляет фон.
    * @param {Event} evt
    */
-  resizeForm.addEventListener('reset', function(evt) {
+  resizeForm.addEventListener('reset', (evt) => {
     evt.preventDefault();
 
     cleanupResizer();
@@ -241,7 +241,7 @@ module.exports = function(gl) {
    * @param {Event} evt
    */
   /*global docCookies*/
-  resizeForm.addEventListener('submit', function(evt) {
+  resizeForm.addEventListener('submit', (evt) => {
     evt.preventDefault();
 
     if (resizeFormIsValid()) {
@@ -264,7 +264,7 @@ module.exports = function(gl) {
    * Сброс формы фильтра. Показывает форму кадрирования.
    * @param {Event} evt
    */
-  filterForm.addEventListener('reset', function(evt) {
+  filterForm.addEventListener('reset', (evt) => {
     evt.preventDefault();
 
     filterForm.classList.add('invisible');
@@ -277,7 +277,7 @@ module.exports = function(gl) {
    * @param {Event} evt
    */
 
-  filterForm.addEventListener('submit', function(evt) {
+  filterForm.addEventListener('submit', (evt) => {
     evt.preventDefault();
     docCookies.setItem('filter', getSelectedFilter(), cookieEspires());
 
@@ -289,8 +289,8 @@ module.exports = function(gl) {
   });
 
   function cookieEspires() {
-    var now = new Date();
-    var lastBirthday = new Date(now.getFullYear(), 2, 23);
+    let now = new Date();
+    let lastBirthday = new Date(now.getFullYear(), 2, 23);
     if ((now.valueOf() - lastBirthday.valueOf()) < 0) {
       lastBirthday.setFullYear(lastBirthday.getFullYear() - 1);
     }
@@ -298,13 +298,13 @@ module.exports = function(gl) {
   }
 
   function getSelectedFilter() {
-    return [].filter.call(filterForm['upload-filter'], function(item) {
+    return [].filter.call(filterForm['upload-filter'], (item) => {
       return item.checked;
     })[0].value;
   }
 
   function setSelectedFilter(filterValue) {
-    var itemToCheck = [].filter.call(filterForm['upload-filter'], function(item) {
+    var itemToCheck = [].filter.call(filterForm['upload-filter'], (item) => {
       return item.value === filterValue;
     });
 

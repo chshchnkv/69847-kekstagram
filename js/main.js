@@ -1,7 +1,7 @@
 'use strict';
 
-var pictures = require('./pictures');
+let pictures = require('./pictures');
 pictures(window);
 
-var upload = require('./upload');
+let upload = require('./upload');
 upload(window);

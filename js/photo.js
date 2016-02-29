@@ -22,32 +22,32 @@ inherit(Photo, PhotoBase);
 * @return {HTMLElement} - возвращает сгенерированный DOM-элемент
 */
 Photo.prototype.render = function(appendTo) {
-  var template = document.querySelector('#picture-template');
+  let template = document.querySelector('#picture-template');
   this.element = ('content' in template) ? template.content.children[0].cloneNode(true) : template.children[0].cloneNode(true);
 
-  var templateImage = this.element.querySelector('img');
+  let templateImage = this.element.querySelector('img');
 
   if (this.element.classList.contains('picture')) {
     this.element.href = this.getImageSrc();
     this.element.querySelector('.picture-comments').textContent = this._data.comments;
     this.element.querySelector('.picture-likes').textContent = this._data.likes;
 
-    var img = new Image();
+    let img = new Image();
 
-    img.onload = function() {
+    img.onload = () => {
       clearTimeout(imageLoadTimeout);
       img.width = 182;
       img.height = 182;
       this.element.replaceChild(img, templateImage);
-    }.bind(this);
+    };
 
-    img.onerror = function() {
+    img.onerror = () => {
       this._imageLoadFailure();
-    }.bind(this);
+    };
 
-    var imageLoadTimeout = setTimeout(function() {
+    var imageLoadTimeout = setTimeout(() => {
       this._imageLoadFailure();
-    }.bind(this), window.IMAGE_TIMEOUT);
+    }, window.IMAGE_TIMEOUT);
 
     img.src = this._data.url;
 
