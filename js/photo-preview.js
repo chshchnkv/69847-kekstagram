@@ -1,7 +1,7 @@
 'use strict';
 
-var inherit = require('./inherit');
-var PhotoBase = require('./photo-base');
+import inherit from 'inherit';
+import PhotoBase from 'photo-base';
 
 /**
 * Превью фотографии в галерее
@@ -11,4 +11,4 @@ function PhotoPreview() {}
 
 inherit(PhotoPreview, PhotoBase);
 
-module.exports = PhotoPreview;
+export default PhotoPreview;

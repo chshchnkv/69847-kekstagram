@@ -418,4 +418,4 @@ var Coordinate = function(x, y) {
   this.y = y;
 };
 
-module.exports = Resizer;
+export default Resizer;

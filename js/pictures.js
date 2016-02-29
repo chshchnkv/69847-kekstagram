@@ -1,9 +1,10 @@
 'use strict';
 
-var Gallery = require('gallery');
-var Photo = require('photo');
+import Gallery from 'gallery';
+import Photo from 'photo';
+import PhotoData from 'photo-data';
 
-module.exports = function(gl) {
+export default function(gl) {
   /**
   * @const
   * @type {number}
@@ -126,13 +127,13 @@ module.exports = function(gl) {
 
   /**
   * Загруженные с сервера фотографии
-  * @type {Photo[]}
+  * @type {PhotoData[]}
   */
   var loadedPictures = [];
 
   /**
   * Отфильтрованные фотографии
-  * @type {Photo[]}
+  * @type {PhotoData[]}
   */
   var filteredPictures = [];
 
@@ -179,7 +180,7 @@ module.exports = function(gl) {
       let rawData = event.target.response;
       let rawDataArray = JSON.parse(rawData);
       loadedPictures = rawDataArray.map((data) => {
-        return new Photo(data);
+        return new PhotoData(data);
       });
 
       /* отрисовка с фильтром, установленным при загрузке страницы */
@@ -216,11 +217,11 @@ module.exports = function(gl) {
 
   /**
   * Отрисовка фотографий на странице
-  * @param {Photo[]} pictures - массив фотографий для отрисовки
+  * @param {PhotoData[]} pictures - массив фотографий для отрисовки
   * @param {number} page - номер страницы, которую нужно отрисовать
   * @param {boolean} replace - true если нужно заменить имеющиеся фотографии на странице
   */
-  function renderPictures(pictures, page, replace) {
+  function renderPictures(picturesData, page, replace) {
     page = page || 0;
     if (replace) {
       currentPicturesPage = 0;
@@ -234,14 +235,16 @@ module.exports = function(gl) {
 
     let from = page * PAGE_SIZE;
     let to = from + PAGE_SIZE;
-    let pagePictures = pictures.slice(from, to);
+    let pagePicturesData = picturesData.slice(from, to);
 
-    renderedPictures = renderedPictures.concat(pagePictures.map((picture) => {
-      picture.render(picturesFragment);
-      picture.onClick = () => {
-        location.hash = location.hash.indexOf('photo') !== -1 ? '' : 'photo/' + picture.getImageSrc();
+    renderedPictures = renderedPictures.concat(pagePicturesData.map((pictureData) => {
+      let photo = new Photo(pictureData);
+
+      photo.render(picturesFragment);
+      photo.onClick = () => {
+        location.hash = location.hash.indexOf('photo') !== -1 ? '' : 'photo/' + pictureData.getImageSrc();
       };
-      return picture;
+      return photo;
     }));
     picturesElement.appendChild(picturesFragment);
 
@@ -250,7 +253,7 @@ module.exports = function(gl) {
       сработает, если разрешение или масштаб вьюпорта позволяет вывести больше одной страницы на экран за раз
     */
     while (needToRenderNextPage()) {
-      renderPictures(pictures, ++currentPicturesPage);
+      renderPictures(picturesData, ++currentPicturesPage);
     }
   }
 
@@ -269,4 +272,4 @@ module.exports = function(gl) {
       gallery.show();
     }
   }
-};
+}

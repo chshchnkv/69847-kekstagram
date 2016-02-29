@@ -1,7 +1,6 @@
 'use strict';
+import pictures from 'pictures';
+import upload from 'upload';
 
-let pictures = require('./pictures');
 pictures(window);
-
-let upload = require('./upload');
 upload(window);

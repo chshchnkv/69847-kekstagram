@@ -1,15 +1,15 @@
 'use strict';
 
-var inherit = require('./inherit');
-var PhotoBase = require('./photo-base');
+import inherit from 'inherit';
+import PhotoBase from 'photo-base';
 
 /**
 * Фотография в списке.
 * @constructor
-* @param {Object} data - данные, загруженные для одной фотографии
+* @param {PhotoData} data - данные, загруженные для одной фотографии
 */
 function Photo(data) {
-  this._data = data;
+  this._photoData = data;
   this.element = null;
   this._onClick = this._onClick.bind(this);
 }
@@ -28,9 +28,9 @@ Photo.prototype.render = function(appendTo) {
   let templateImage = this.element.querySelector('img');
 
   if (this.element.classList.contains('picture')) {
-    this.element.href = this.getImageSrc();
-    this.element.querySelector('.picture-comments').textContent = this._data.comments;
-    this.element.querySelector('.picture-likes').textContent = this._data.likes;
+    this.element.href = this._photoData.getImageSrc();
+    this.element.querySelector('.picture-comments').textContent = this._photoData.getComments();
+    this.element.querySelector('.picture-likes').textContent = this._photoData.getLikes();
 
     let img = new Image();
 
@@ -49,7 +49,7 @@ Photo.prototype.render = function(appendTo) {
       this._imageLoadFailure();
     }, window.IMAGE_TIMEOUT);
 
-    img.src = this._data.url;
+    img.src = this._photoData.getImageSrc();
 
     this.element.addEventListener('click', this._onClick);
   }
@@ -95,4 +95,4 @@ Photo.prototype._onClick = function(event) {
   }
 };
 
-module.exports = Photo;
+export default Photo;
