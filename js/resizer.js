@@ -137,11 +137,11 @@ Resizer.prototype = {
 
     // Выводим размер изображения
     var fontSize = 20;
-    this._ctx.font = fontSize + 'px sans-serif';
+    this._ctx.font = `${fontSize}px sans-serif`;
     this._ctx.textAlign = 'center';
     this._ctx.fillStyle = '#fff';
 
-    let sizeText = this._image.naturalWidth + ' x ' + this._image.naturalHeight;
+    let sizeText = `${this._image.naturalWidth} x ${this._image.naturalHeight}`;
 
     this._ctx.fillText(sizeText, 0, topY - this._ctx.lineWidth - (fontSize / 2), this._resizeConstraint.side);
 

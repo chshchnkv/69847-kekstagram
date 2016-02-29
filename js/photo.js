@@ -9,9 +9,8 @@ import PhotoBase from 'photo-base';
 * @param {PhotoData} data - данные, загруженные для одной фотографии
 */
 function Photo(data) {
-  this._photoData = data;
-  this.element = null;
   this._onClick = this._onClick.bind(this);
+  this.setData(data);
 }
 
 inherit(Photo, PhotoBase);
@@ -29,8 +28,7 @@ Photo.prototype.render = function(appendTo) {
 
   if (this.element.classList.contains('picture')) {
     this.element.href = this._photoData.getImageSrc();
-    this.element.querySelector('.picture-comments').textContent = this._photoData.getComments();
-    this.element.querySelector('.picture-likes').textContent = this._photoData.getLikes();
+    this._updateStats();
 
     let img = new Image();
 
@@ -60,6 +58,18 @@ Photo.prototype.render = function(appendTo) {
 
   return this.element;
 };
+
+/**
+* Обновить статистику фотографии
+* @private
+*/
+Photo.prototype._updateStats = function() {
+  if (this.element) {
+    this.element.querySelector('.picture-comments').textContent = this._photoData.getComments();
+    this.element.querySelector('.picture-likes').textContent = this._photoData.getLikes();
+  }
+};
+
 
 /**
 * Удаляет обработчики событий с DOM-элемента фотографии и удаляет его из DOM-дерева

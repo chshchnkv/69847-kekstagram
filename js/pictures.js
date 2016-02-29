@@ -115,7 +115,7 @@ export default function(gl) {
         filteredPictures = loadedPictures.slice(0);
     }
 
-    gallery.setPictures(filteredPictures);
+    gallery.setPicturesData(filteredPictures);
     renderPictures(filteredPictures, 0, true);
   }
 
