@@ -20,7 +20,8 @@
   "scripts": {
     "gosha": "webpack --config webpack.config.js ./js/main.js",
     "test": "eslint js/",
-    "start": "webpack-dev-server --watch --config webpack.config.js"
+    "start": "webpack-dev-server --watch --config webpack.config.js",
+    "start2": "webpack --watch"
   },
   "engines": {
     "node": "^5.0.0"

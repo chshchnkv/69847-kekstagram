@@ -4,19 +4,50 @@
 * Базовый объект для фотографий
 * @constructor
 */
-function PhotoBase() {}
+function PhotoBase() {
+}
 
 /**
-* @type {Photo[]}
+* @type {PhotoData}
 * @private
 */
-PhotoBase.prototype._data = null;
+PhotoBase.prototype._photoData = null;
+
+/**
+* @type {HTMLElement}
+*/
+PhotoBase.prototype.element = null;
 
 /**
 * @type {boolean}
 * @private
 */
 PhotoBase.prototype._liked = false;
+
+/*
+* Установка данных для фото. При изменении данных PhotoData запустит событие change, а PhotoBase его обработает, запустив метод render
+*/
+PhotoBase.prototype.setData = function(data) {
+  this._photoData = data;
+  this._photoData.addSubscriber(this);
+
+  this._onPhotoDataChange = this._onPhotoDataChange.bind(this);
+};
+
+/**
+* Обработка изменения в данных модели - внутреннее событие PhotoDataChange
+* По умолчанию вызывает обновление статистики для фотографии.
+* @private
+*/
+PhotoBase.prototype._onPhotoDataChange = function() {
+  this._updateStats();
+};
+
+/**
+* Обновить статистику фотографии
+* @private
+*/
+PhotoBase.prototype._updateStats = function() {};
 
 /**
 * Отрисовка фотографии
@@ -27,58 +58,6 @@ PhotoBase.prototype.render = function() {};
 * Удаление фотографии
 */
 PhotoBase.prototype.remove = function() {};
-
-/**
-* Возвращает число лайков
-* @return {number}
-*/
-PhotoBase.prototype.getLikes = function() {
-  return (this._data ? this._data.likes : 0);
-};
-
-/**
-* Возвращает true, если пользователь сам уже лайкнул фотографию
-* @return {boolean}
-*/
-PhotoBase.prototype.isLiked = function() {
-  return this._liked;
-};
-
-/**
-* Пользователь ставит/снимает лайк с фотографии
-* @param {boolean} bool - лайк/дизлайк
-* @param {boolean} - лайк/дизлайк
-*/
-PhotoBase.prototype.like = function(bool) {
-  this._liked = bool;
-  if (this._data) {
-    this._data.likes += (this._liked ? 1 : -1);
-  }
-};
-
-/**
-* Возвращает количество комментариев к фотографии
-* @return {number}
-*/
-PhotoBase.prototype.getComments = function() {
-  return (this._data ? this._data.comments : 0);
-};
-
-/**
-* Возвращает дату фотографии
-* @return {Date}
-*/
-PhotoBase.prototype.getDate = function() {
-  return (this._data ? new Date(this._data.date) : new Date());
-};
-
-/**
-* Возвращает url фотографии
-* @return {string}
-*/
-PhotoBase.prototype.getImageSrc = function() {
-  return (this._data ? this._data.url : '');
-};
 
 /**
 * Обработчик щелчка по фотографии с вызовом callback onClick
@@ -101,4 +80,8 @@ PhotoBase.prototype._onClick = function(event) {
 */
 PhotoBase.prototype.onClick = null;
 
-module.exports = PhotoBase;
+/**
+* callback для обработки изменения данных
+*/
+
+export default PhotoBase;

@@ -5,9 +5,9 @@
 
 'use strict';
 
-var Resizer = require('./resizer');
+import Resizer from 'resizer';
 
-module.exports = function(gl) {
+export default function(gl) {
   /** @enum {string} */
   var FileType = {
     'GIF': '',
@@ -342,4 +342,4 @@ module.exports = function(gl) {
 
   cleanupResizer();
   updateBackground();
-};
+}

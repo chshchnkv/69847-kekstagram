@@ -1,26 +1,24 @@
 'use strict';
 
+import PhotoPreview from 'photo-preview';
+
 /*
 * Галерея фотографий
 * @constructor
 */
 function Gallery() {
-  this._data = null;
+  this._photoPreview = new PhotoPreview();
+  this._picturesData = null;
   this._currentPicture = 0;
   this._currentPhoto = null;
 
   this.element = document.querySelector('.gallery-overlay');
   this._closeButton = this.element.querySelector('.gallery-overlay-close');
   this._image = this.element.querySelector('.gallery-overlay-image');
-  this._likes = this.element.querySelector('.likes-count');
-  this._likeButton = this.element.querySelector('.gallery-overlay-controls-like');
-  this._commentsCount = this.element.querySelector('.comments-count');
-  this._commentsText = this.element.querySelector('.gallery-overlay-controls-comments');
 
-  this._onLikeClick = this._onLikeClick.bind(this);
-  this._onPhotoClick = this._onPhotoClick.bind(this);
   this._onCloseClick = this._onCloseClick.bind(this);
   this._onDocumentKeyDown = this._onDocumentKeyDown.bind(this);
+  this._onPhotoClick = this._onPhotoClick.bind(this);
 }
 
 /**
@@ -28,9 +26,8 @@ function Gallery() {
 */
 Gallery.prototype.show = function() {
   this.element.classList.remove('invisible');
-  this._image.addEventListener('click', this._onPhotoClick);
   this._closeButton.addEventListener('click', this._onCloseClick);
-  this._likeButton.addEventListener('click', this._onLikeClick);
+  this._image.addEventListener('click', this._onPhotoClick);
   document.addEventListener('keydown', this._onDocumentKeyDown);
 };
 
@@ -40,9 +37,8 @@ Gallery.prototype.show = function() {
 Gallery.prototype.hide = function() {
   location.hash = '';
   this.element.classList.add('invisible');
-  this._image.removeEventListener('click', this._onPhotoClick);
   this._closeButton.removeEventListener('click', this._onCloseClick);
-  this._likeButton.removeAttribute('click', this._onLikeClick);
+  this._image.removeEventListener('click', this._onPhotoClick);
   document.removeEventListener('keydown', this._onDocumentKeyDown);
 };
 
@@ -65,16 +61,6 @@ Gallery.prototype._onCloseClick = function() {
 };
 
 /**
-* Обработчик щелчка по лайку
-* @listens click
-* @private
-*/
-Gallery.prototype._onLikeClick = function() {
-  this._currentPhoto.like(!this._likes.classList.contains('likes-count-liked'));
-  this._updateLikes();
-};
-
-/**
 * Обработчик нажатий клавиш
 * @param {Event} event - событие нажатия клавиши
 * @param {Event} - событие нажатия клавиши
@@ -90,24 +76,10 @@ Gallery.prototype._onDocumentKeyDown = function(event) {
 
 /**
 * Установка данных для галереи
-* @param {Photo[]} data - массив фотографий
+* @param {PhotoData[]} data - массив фотографий
 */
-Gallery.prototype.setPictures = function(data) {
-  this._data = data;
-};
-
-/**
-* Синхронизация лайков
-* @private
-*/
-Gallery.prototype._updateLikes = function() {
-  var photo = this._data[this._currentPicture];
-  this._likes.textContent = photo.getLikes();
-  if (photo.isLiked()) {
-    this._likes.classList.add('likes-count-liked');
-  } else {
-    this._likes.classList.remove('likes-count-liked');
-  }
+Gallery.prototype.setPicturesData = function(data) {
+  this._picturesData = data;
 };
 
 /**
@@ -115,55 +87,28 @@ Gallery.prototype._updateLikes = function() {
 * @param {number|string} pictureId - номер фотографии в массиве или url фотографии
 */
 Gallery.prototype.setCurrentPicture = function(pictureId) {
+  let currentPicture = null;
   switch (typeof pictureId) {
     case 'number': {
-      if ((pictureId >= 0) && (pictureId < this._data.length)) {
+      if ((pictureId >= 0) && (pictureId < this._picturesData.length)) {
         this._currentPicture = pictureId;
-        this._currentPhoto = this._data[pictureId];
+        currentPicture = this._picturesData[this._currentPicture];
       }
       break;
     }
     case 'string': {
-      for (var i = 0; i < this._data.length; i++) {
-        if (this._data[i].getImageSrc() === pictureId) {
+      for (let i = 0; i < this._picturesData.length; i++) {
+        if (this._picturesData[i].getImageSrc() === pictureId) {
           this._currentPicture = i;
-          this._currentPhoto = this._data[i];
+          currentPicture = this._picturesData[this._currentPicture];
           break;
         }
       }
     }
   }
 
-  if (this._currentPhoto) {
-    this._image.src = this._currentPhoto.getImageSrc();
-    this._updateLikes();
-
-    var comments = this._currentPhoto.getComments();
-    this._commentsCount.textContent = comments;
-    this._commentsText.lastChild.nodeValue = this._getPluralCommentsCount(comments);
-  }
-
-};
-
-/**
-* Склоняет слово "комментарий" в зависимости от количества
-* @param {number} count - количество комментариев
-* @return {string}
-* @private
-*/
-Gallery.prototype._getPluralCommentsCount = function(count) {
-  if ((count >= 10) && (count <= 20)) {
-    return ' комментариев';
-  } else {
-    let div = count % 10;
-    if ((div >= 2) && (div <= 4)) {
-      return ' комментария';
-    } else if (div === 1) {
-      return ' комментарий';
-    } else {
-      return ' комментариев';
-    }
-  }
+  this._photoPreview.setData(currentPicture);
+  this._photoPreview.render();
 };
 
 /**
@@ -172,8 +117,8 @@ Gallery.prototype._getPluralCommentsCount = function(count) {
 * @private
 */
 Gallery.prototype._getPictureByNumber = function(pictureNumber) {
-  if ((pictureNumber >= 0) && (pictureNumber < this._data.length)) {
-    return this._data[pictureNumber];
+  if ((pictureNumber >= 0) && (pictureNumber < this._picturesData.length)) {
+    return this._picturesData[pictureNumber];
   } else {
     return null;
   }
@@ -205,4 +150,4 @@ Gallery.prototype.previousPicture = function() {
   this._switchPhoto(this._currentPicture - 1);
 };
 
-module.exports = Gallery;
+export default Gallery;
